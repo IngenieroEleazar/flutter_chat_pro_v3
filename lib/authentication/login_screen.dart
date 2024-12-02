@@ -114,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                suffixIcon: _phoneNumberController.text.length > 9
+                suffixIcon: _phoneNumberController.text.length > 8
                     ? authProvider.isLoading
                         ? const Padding(
                             padding: EdgeInsets.all(8.0),
