@@ -65,6 +65,14 @@ dependencies:
   flutter_chat_reactions: ^0.1.0
   win32: ^5.9.0
   archive: ^3.6.1
+  flutter_native_splash: ^2.4.3
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+  color: "#ffffff" # Color de fondo en hexadecimal
+  background_image: "assets/images/logo_moldea.png"
 
 dev_dependencies:
   flutter_test:
@@ -92,6 +100,7 @@ flutter:
   assets:
     - assets/images/
     - assets/lottie/
+    - assets/images/logo_moldea.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -61,7 +61,7 @@ class _OTPScreenState extends State<OTPScreen> {
               children: [
                 const SizedBox(height: 50),
                 Text(
-                  'Verification',
+                  'Verificacion',
                   style: GoogleFonts.openSans(
                     fontSize: 28,
                     fontWeight: FontWeight.w500,
@@ -69,7 +69,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 ),
                 const SizedBox(height: 50),
                 Text(
-                  'Enter the 6-digit code sent the number',
+                  'Introduzca el codigo de 6 digitos enviado al celular',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.openSans(
                     fontSize: 18,
@@ -149,7 +149,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 authProvider.isLoading
                     ? const SizedBox.shrink()
                     : Text(
-                        'Didn\'t receive the code?',
+                        'No recibiste ningun codigo?',
                         style: GoogleFonts.openSans(fontSize: 16),
                       ),
                 const SizedBox(height: 10),
@@ -160,7 +160,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           // TODO resend otp code
                         },
                         child: Text(
-                          'Resend Code',
+                          'Volver a enviar',
                           style: GoogleFonts.openSans(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,

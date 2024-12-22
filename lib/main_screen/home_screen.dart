@@ -5,6 +5,7 @@ import 'package:flutter_chat_pro/main_screen/create_group_screen.dart';
 import 'package:flutter_chat_pro/main_screen/my_chats_screen.dart';
 import 'package:flutter_chat_pro/main_screen/groups_screen.dart';
 import 'package:flutter_chat_pro/main_screen/people_screen.dart';
+import 'package:flutter_chat_pro/main_screen/teachers_screen.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/providers/group_provider.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
@@ -26,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen>
     MyChatsScreen(),
     GroupsScreen(),
     PeopleScreen(),
+    TeachersScreen(),
   ];
 
   @override
@@ -72,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen>
     final authProvider = context.watch<AuthenticationProvider>();
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Flutter Chat Pro'),
+          title: const Text('B&VMOLDEATUFUTURO'),
           actions: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -100,39 +102,46 @@ class _HomeScreenState extends State<HomeScreen>
           },
           children: pages,
         ),
-        floatingActionButton: currentIndex == 1
-            ? FloatingActionButton(
-                onPressed: () {
-                  context
-                      .read<GroupProvider>()
-                      .clearGroupMembersList()
-                      .whenComplete(() {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const CreateGroupScreen(),
-                      ),
-                    );
-                  });
-                },
-                child: const Icon(CupertinoIcons.add),
-              )
-            : null,
+        // floatingActionButton: currentIndex == 1
+        //     ? FloatingActionButton(
+        //         onPressed: () {
+        //           context
+        //               .read<GroupProvider>()
+        //               .clearGroupMembersList()
+        //               .whenComplete(() {
+        //             Navigator.of(context).push(
+        //               MaterialPageRoute(
+        //                 builder: (context) => const CreateGroupScreen(),
+        //               ),
+        //             );
+        //           });
+        //         },
+        //         child: const Icon(CupertinoIcons.add),
+        //       )
+        //     : null,
         bottomNavigationBar: BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.chat_bubble_2),
               label: 'Chats',
             ),
+             BottomNavigationBarItem(
+               icon: Icon(CupertinoIcons.group),
+               label: 'Grupos',
+           ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.group),
-              label: 'Groups',
+               icon: Icon(CupertinoIcons.globe),
+               label: 'People',
             ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.globe),
-              label: 'People',
+              icon: Icon(CupertinoIcons.person),
+              label: 'Docentes',
             ),
           ],
           currentIndex: currentIndex,
+          selectedItemColor: Colors.blue, // Color de ítem seleccionado
+          unselectedItemColor: Colors.grey, // Color de ítems no seleccionados
+          backgroundColor: Colors.white, // Fondo del BottomNavigationBar
           onTap: (index) {
             // animate to the page
             pageController.animateToPage(index,

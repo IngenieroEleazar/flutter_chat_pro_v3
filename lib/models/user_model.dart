@@ -9,6 +9,7 @@ class UserModel {
   String aboutMe;
   String lastSeen;
   String createdAt;
+  bool isAdmin;
   bool isOnline;
   List<String> friendsUIDs;
   List<String> friendRequestsUIDs;
@@ -23,6 +24,7 @@ class UserModel {
     required this.aboutMe,
     required this.lastSeen,
     required this.createdAt,
+    required this.isAdmin,
     required this.isOnline,
     required this.friendsUIDs,
     required this.friendRequestsUIDs,
@@ -40,6 +42,7 @@ class UserModel {
       aboutMe: map[Constants.aboutMe] ?? '',
       lastSeen: map[Constants.lastSeen] ?? '',
       createdAt: map[Constants.createdAt] ?? '',
+      isAdmin: map[Constants.isAdmin] ?? false,
       isOnline: map[Constants.isOnline] ?? false,
       friendsUIDs: List<String>.from(map[Constants.friendsUIDs] ?? []),
       friendRequestsUIDs:
@@ -60,6 +63,7 @@ class UserModel {
       Constants.aboutMe: aboutMe,
       Constants.lastSeen: lastSeen,
       Constants.createdAt: createdAt,
+      Constants.isAdmin: isAdmin,
       Constants.isOnline: isOnline,
       Constants.friendsUIDs: friendsUIDs,
       Constants.friendRequestsUIDs: friendRequestsUIDs,

@@ -17,15 +17,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
 
   Country selectedCountry = Country(
-    phoneCode: '26',
-    countryCode: 'ZM',
+    phoneCode: '51',
+    countryCode: 'PE',
     e164Sc: 0,
     geographic: true,
     level: 1,
-    name: 'Zambia',
-    example: 'Zambia',
-    displayName: 'Zambia',
-    displayNameNoCountryCode: 'ZM',
+    name: 'Peru',
+    example: 'Peru',
+    displayName: 'Peru',
+    displayNameNoCountryCode: 'PE',
     e164Key: '',
   );
 
@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Lottie.asset(AssetsMenager.chatBubble),
             ),
             Text(
-              'Flutter Chat Pro',
+              'B&V MOLDEA TU FUTURO',
               style: GoogleFonts.openSans(
                 fontSize: 28,
                 fontWeight: FontWeight.w500,
@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-              'Add your phone number will send you a code to verify',
+              'Añadir un numero de celular para recibir su codigo de verificación',
               textAlign: TextAlign.center,
               style: GoogleFonts.openSans(
                 fontSize: 16,

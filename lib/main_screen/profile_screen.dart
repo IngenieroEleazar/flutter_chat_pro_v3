@@ -57,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         ),
         centerTitle: true,
-        title: const Text('Profile'),
+        title: const Text('Perfil'),
       ),
       body: StreamBuilder(
         stream: context.read<AuthenticationProvider>().userStream(userID: uid),
@@ -89,7 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Text(
-                      'Settings',
+                      'Configuracion',
                       style: GoogleFonts.openSans(
                           fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -99,55 +99,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       children: [
                         SettingsListTile(
-                          title: 'Account',
+                          title: 'Perfil',
                           icon: Icons.person,
                           iconContainerColor: Colors.deepPurple,
                           onTap: () {
                             // navigate to account settings
                           },
                         ),
-                        SettingsListTile(
-                          title: 'My Media',
-                          icon: Icons.image,
-                          iconContainerColor: Colors.green,
-                          onTap: () {
-                            // navigate to account settings
-                          },
-                        ),
-                        SettingsListTile(
-                          title: 'Notifications',
-                          icon: Icons.notifications,
-                          iconContainerColor: Colors.red,
-                          onTap: () {
-                            // navigate to account settings
-                          },
-                        ),
+                        // SettingsListTile(
+                        //   title: 'My Media',
+                        //   icon: Icons.image,
+                        //   iconContainerColor: Colors.green,
+                        //   onTap: () {
+                        //     // navigate to account settings
+                        //   },
+                        // ),
+                        // SettingsListTile(
+                        //   title: 'Notifications',
+                        //   icon: Icons.notifications,
+                        //   iconContainerColor: Colors.red,
+                        //   onTap: () {
+                        //     // navigate to account settings
+                        //   },
+                        // ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Card(
-                    child: Column(
-                      children: [
-                        SettingsListTile(
-                          title: 'Help',
-                          icon: Icons.help,
-                          iconContainerColor: Colors.yellow,
-                          onTap: () {
-                            // navigate to account settings
-                          },
-                        ),
-                        SettingsListTile(
-                          title: 'Share',
-                          icon: Icons.share,
-                          iconContainerColor: Colors.blue,
-                          onTap: () {
-                            // navigate to account settings
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+                  // const SizedBox(height: 10),
+                  // Card(
+                  //   child: Column(
+                  //     children: [
+                  //       SettingsListTile(
+                  //         title: 'Help',
+                  //         icon: Icons.help,
+                  //         iconContainerColor: Colors.yellow,
+                  //         onTap: () {
+                  //           // navigate to account settings
+                  //         },
+                  //       ),
+                  //       SettingsListTile(
+                  //         title: 'Share',
+                  //         icon: Icons.share,
+                  //         iconContainerColor: Colors.blue,
+                  //         onTap: () {
+                  //           // navigate to account settings
+                  //         },
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(height: 10),
                   Card(
                     child: ListTile(
@@ -167,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       ),
-                      title: const Text('Change theme'),
+                      title: const Text('Modo Oscuro'),
                       trailing: Switch(
                           value: isDarkMode,
                           onChanged: (value) {

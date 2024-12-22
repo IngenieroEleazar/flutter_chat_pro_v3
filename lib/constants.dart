@@ -26,6 +26,7 @@ class Constants {
   static const String aboutMe = 'aboutMe';
   static const String lastSeen = 'lastSeen';
   static const String createdAt = 'createdAt';
+  static const String isAdmin = 'isAdmin';
   static const String isOnline = 'isOnline';
   static const String friendsUIDs = 'friendsUIDs';
   static const String friendRequestsUIDs = 'friendRequestsUIDs';

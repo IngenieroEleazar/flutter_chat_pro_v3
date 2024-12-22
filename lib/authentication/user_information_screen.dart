@@ -212,6 +212,7 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
       aboutMe: 'Hey there, I\'m using Flutter Chat Pro',
       lastSeen: '',
       createdAt: '',
+      isAdmin: false,
       isOnline: true,
       friendsUIDs: [],
       friendRequestsUIDs: [],
