@@ -186,17 +186,35 @@ Widget messageToShow({required MessageEnum type, required String message}) {
 //   'Delete',
 // ];
 
-// store file to storage and return file url
+// Store file to Firebase Storage and return file URL
 Future<String> storeFileToStorage({
   required File file,
   required String reference,
 }) async {
-  UploadTask uploadTask =
-      FirebaseStorage.instance.ref().child(reference).putFile(file);
-  TaskSnapshot taskSnapshot = await uploadTask;
-  String fileUrl = await taskSnapshot.ref.getDownloadURL();
-  return fileUrl;
+  try {
+    // Define los metadatos, estableciendo el tipo MIME como 'application/pdf'
+    SettableMetadata metadata = SettableMetadata(
+      contentType: 'application/pdf', // Establecer tipo MIME para archivos PDF
+    );
+
+    // Inicia la carga con los metadatos especificados
+    UploadTask uploadTask = FirebaseStorage.instance
+        .ref()
+        .child(reference)
+        .putFile(file, metadata);
+
+    // Espera a que la carga termine
+    TaskSnapshot taskSnapshot = await uploadTask;
+
+    // Obtén la URL de descarga del archivo subido
+    String fileUrl = await taskSnapshot.ref.getDownloadURL();
+    return fileUrl;
+  } catch (e) {
+    // Maneja cualquier error durante la carga
+    throw Exception('Error uploading file: $e');
+  }
 }
+
 
 // animated dialog
 void showMyAnimatedDialog({

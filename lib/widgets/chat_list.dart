@@ -40,7 +40,7 @@ class _ChatListState extends State<ChatList> {
     super.dispose();
   }
 
-  void onContextMenyClicked(
+  void onContextMenuClicked(
       {required String item, required MessageModel message}) {
     switch (item) {
       case 'Reply':
@@ -209,174 +209,186 @@ class _ChatListState extends State<ChatList> {
 
   @override
   Widget build(BuildContext context) {
-    // current user uid
-    final uid = context.read<AuthenticationProvider>().userModel!.uid;
+    // Obtener el UID del usuario actual
+    final authProvider = context.read<AuthenticationProvider>();
+    final uid = authProvider.userModel!.uid;
+
+
     return StreamBuilder<List<MessageModel>>(
       stream: context.read<ChatProvider>().getMessagesStream(
-            userId: uid,
-            contactUID: widget.contactUID,
-            isGroup: widget.groupId,
-          ),
+        userId: uid,
+        contactUID: widget.contactUID,
+        isGroup: widget.groupId,
+      ),
       builder: (context, snapshot) {
+        // Manejo de errores
         if (snapshot.hasError) {
           return const Center(
-            child: Text('Something went wrong'),
+            child: Text(
+              'Something went wrong. Please try again later.',
+              style: TextStyle(fontSize: 16),
+            ),
           );
         }
+
+        // Mostrar indicador de carga mientras se espera la data
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        if (snapshot.data!.isEmpty) {
+        // Manejar caso de datos nulos o lista vacía
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(
             child: Text(
               'Start a conversation',
               textAlign: TextAlign.center,
               style: GoogleFonts.openSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
             ),
           );
         }
 
-        // automatically scroll to the bottom on new message
+        // Obtener los mensajes desde el snapshot
+        final messagesList = snapshot.data!;
+
+        // Hacer scroll automático al nuevo mensaje
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollController.animateTo(
-            _scrollController.position.minScrollExtent,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-          );
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              _scrollController.position.minScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+            );
+          }
         });
-        if (snapshot.hasData) {
-          final messagesList = snapshot.data!;
-          return GroupedListView<dynamic, DateTime>(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            reverse: true,
-            controller: _scrollController,
-            elements: messagesList,
-            groupBy: (element) {
-              return DateTime(
-                element.timeSent!.year,
-                element.timeSent!.month,
-                element.timeSent!.day,
+
+        return GroupedListView<dynamic, DateTime>(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          reverse: true,
+          controller: _scrollController,
+          elements: messagesList,
+          groupBy: (element) => DateTime(
+            element.timeSent!.year,
+            element.timeSent!.month,
+            element.timeSent!.day,
+          ),
+          groupHeaderBuilder: (dynamic groupedByValue) => SizedBox(
+            height: 40,
+            child: buildDateTime(groupedByValue),
+          ),
+          itemBuilder: (context, dynamic element) {
+            final message = element as MessageModel;
+
+            // Si es un chat grupal, marcar mensajes como vistos automáticamente
+            if (widget.groupId.isNotEmpty) {
+              context.read<ChatProvider>().setMessageStatus(
+                currentUserId: uid,
+                contactUID: widget.contactUID,
+                messageId: message.messageId,
+                isSeenByList: message.isSeenBy,
+                isGroupChat: true,
               );
-            },
-            groupHeaderBuilder: (dynamic groupedByValue) =>
-                SizedBox(height: 40, child: buildDateTime(groupedByValue)),
-            itemBuilder: (context, dynamic element) {
-              final message = element as MessageModel;
-
-              // check if ita groupChat
-              if (widget.groupId.isNotEmpty) {
+            } else {
+              // Marcar mensaje como visto si no es del remitente actual
+              if (!message.isSeen && message.senderUID != uid) {
                 context.read<ChatProvider>().setMessageStatus(
-                      currentUserId: uid,
-                      contactUID: widget.contactUID,
-                      messageId: message.messageId,
-                      isSeenByList: message.isSeenBy,
-                      isGroupChat: widget.groupId.isNotEmpty,
-                    );
-              } else {
-                if (!message.isSeen && message.senderUID != uid) {
-                  context.read<ChatProvider>().setMessageStatus(
-                        currentUserId: uid,
-                        contactUID: widget.contactUID,
-                        messageId: message.messageId,
-                        isSeenByList: message.isSeenBy,
-                        isGroupChat: widget.groupId.isNotEmpty,
-                      );
-                }
+                  currentUserId: uid,
+                  contactUID: widget.contactUID,
+                  messageId: message.messageId,
+                  isSeenByList: message.isSeenBy,
+                  isGroupChat: false,
+                );
               }
+            }
 
-              // check if we sent the last message
-              final isMe = element.senderUID == uid;
-              // if the deletedBy contains the current user id then dont show the message
-              bool deletedByCurrentUser = message.deletedBy.contains(uid);
-              return deletedByCurrentUser
-                  ? const SizedBox.shrink()
-                  : GestureDetector(
-                      onLongPress: () async {
-                        Navigator.of(context).push(
-                          HeroDialogRoute(builder: (context) {
-                            return ReactionsDialogWidget(
-                              id: element.messageId,
-                              messageWidget: isMe
-                                  ? AlignMessageRightWidget(
-                                      message: message,
-                                      viewOnly: true,
-                                      isGroupChat: widget.groupId.isNotEmpty,
-                                    )
-                                  : AlignMessageLeftWidget(
-                                      message: message,
-                                      viewOnly: true,
-                                      isGroupChat: widget.groupId.isNotEmpty,
-                                    ),
-                              onReactionTap: (reaction) {
-                                if (reaction == '➕') {
-                                  showEmojiContainer(
-                                    messageId: element.messageId,
-                                  );
-                                } else {
-                                  sendReactionToMessage(
-                                    reaction: reaction,
-                                    messageId: element.messageId,
-                                  );
-                                }
-                              },
-                              onContextMenuTap: (item) {
-                                onContextMenyClicked(
-                                  item: item.label,
-                                  message: message,
-                                );
-                              },
-                              widgetAlignment: isMe
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                            );
-                          }),
-                        );
-                      },
-                      child: Hero(
-                        tag: element.messageId,
-                        child: MessageWidget(
-                          message: element,
-                          onRightSwipe: () {
-                            // set the message reply to true
-                            final messageReply = MessageReplyModel(
-                              message: element.message,
-                              senderUID: element.senderUID,
-                              senderName: element.senderName,
-                              senderImage: element.senderImage,
-                              messageType: element.messageType,
-                              isMe: isMe,
-                            );
+            // Verificar si el mensaje fue eliminado por el usuario actual
+            final isMe = element.senderUID == uid;
+            final deletedByCurrentUser = message.deletedBy.contains(uid);
 
-                            context
-                                .read<ChatProvider>()
-                                .setMessageReplyModel(messageReply);
-                          },
-                          isMe: isMe,
+            // Ocultar mensajes eliminados
+            if (deletedByCurrentUser) {
+              return const SizedBox.shrink();
+            }
+
+            return GestureDetector(
+              onLongPress: () async {
+                Navigator.of(context).push(
+                  HeroDialogRoute(
+                    builder: (context) {
+                      return ReactionsDialogWidget(
+                        id: element.messageId,
+                        messageWidget: isMe
+                            ? AlignMessageRightWidget(
+                          message: message,
+                          viewOnly: true,
+                          isGroupChat: widget.groupId.isNotEmpty,
+                        )
+                            : AlignMessageLeftWidget(
+                          message: message,
+                          viewOnly: true,
                           isGroupChat: widget.groupId.isNotEmpty,
                         ),
-                      ),
+                        onReactionTap: (reaction) {
+                          if (reaction == '➕') {
+                            showEmojiContainer(messageId: element.messageId);
+                          } else {
+                            sendReactionToMessage(
+                              reaction: reaction,
+                              messageId: element.messageId,
+                            );
+                          }
+                        },
+                        onContextMenuTap: (item) {
+                          onContextMenuClicked(
+                            item: item.label,
+                            message: message,
+                          );
+                        },
+                        widgetAlignment: isMe
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                      );
+                    },
+                  ),
+                );
+              },
+              child: Hero(
+                tag: element.messageId,
+                child: MessageWidget(
+                  message: element,
+                  onRightSwipe: () {
+                    // Establecer el mensaje como respuesta
+                    final messageReply = MessageReplyModel(
+                      message: element.message,
+                      senderUID: element.senderUID,
+                      senderName: element.senderName,
+                      senderImage: element.senderImage,
+                      messageType: element.messageType,
+                      isMe: isMe,
                     );
-            },
-            groupComparator: (value1, value2) => value2.compareTo(value1),
-            itemComparator: (item1, item2) {
-              var firstItem = item1.timeSent;
 
-              var secondItem = item2.timeSent;
-
-              return secondItem!.compareTo(firstItem!);
-            }, // optional
-            useStickyGroupSeparators: true, // optional
-            floatingHeader: true, // optional
-            order: GroupedListOrder.ASC, // optional
-          );
-        }
-        return const SizedBox.shrink();
+                    context
+                        .read<ChatProvider>()
+                        .setMessageReplyModel(messageReply);
+                  },
+                  isMe: isMe,
+                  isGroupChat: widget.groupId.isNotEmpty,
+                ),
+              ),
+            );
+          },
+          groupComparator: (value1, value2) => value2.compareTo(value1),
+          itemComparator: (item1, item2) =>
+              item2.timeSent!.compareTo(item1.timeSent!),
+          useStickyGroupSeparators: true,
+          floatingHeader: true,
+          order: GroupedListOrder.ASC,
+        );
       },
     );
   }

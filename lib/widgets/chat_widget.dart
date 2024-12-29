@@ -41,6 +41,7 @@ class ChatWidget extends StatelessWidget {
 
     // get the contactUID
     final contactUID = chat != null ? chat!.contactUID : group!.groupId;
+
     // get the messageType
     final messageType = chat != null ? chat!.messageType : group!.messageType;
     return ListTile(

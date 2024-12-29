@@ -13,6 +13,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 class BottomChatField extends StatefulWidget {
   const BottomChatField({
@@ -151,23 +152,44 @@ class _BottomChatFieldState extends State<BottomChatField> {
   }
 
   // select a video file from device
-  void selectVideo() async {
-    File? fileVideo = await pickVideo(
-      onFail: (String message) {
-        showSnackBar(context, message);
-      },
+  // void selectVideo() async {
+  //   File? fileVideo = await pickVideo(
+  //     onFail: (String message) {
+  //       showSnackBar(context, message);
+  //     },
+  //   );
+  //
+  //   popContext();
+  //
+  //   if (fileVideo != null) {
+  //     filePath = fileVideo.path;
+  //     // send video message to firestore
+  //     sendFileMessage(
+  //       messageType: MessageEnum.video,
+  //     );
+  //   }
+  // }
+
+  // agregue new 25/12/2024
+  void selectPDF() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'], // Limitar a archivos PDF
     );
 
-    popContext();
-
-    if (fileVideo != null) {
-      filePath = fileVideo.path;
-      // send video message to firestore
+    if (result != null && result.files.single.path != null) {
+      filePath = result.files.single.path!;
+      // Enviar archivo PDF al Firestore
       sendFileMessage(
-        messageType: MessageEnum.video,
+        messageType: MessageEnum.file,
       );
+    } else {
+      showSnackBar(context, 'No file selected');
     }
   }
+
+  // hasta aqui
+
 
   popContext() {
     Navigator.pop(context);
@@ -346,6 +368,7 @@ class _BottomChatFieldState extends State<BottomChatField> {
                             ? Icons.keyboard_alt
                             : Icons.emoji_emotions_outlined),
                       ),
+
                       IconButton(
                         onPressed: isSendingAudio
                             ? null
@@ -377,11 +400,17 @@ class _BottomChatFieldState extends State<BottomChatField> {
                                               },
                                             ),
                                             // select a video file from device
+                                            // ListTile(
+                                            //   leading: const Icon(
+                                            //       Icons.video_library),
+                                            //   title: const Text('Video'),
+                                            //   onTap: selectVideo,
+                                            // ),
+                                            // seleccionar un archivo PDF
                                             ListTile(
-                                              leading: const Icon(
-                                                  Icons.video_library),
-                                              title: const Text('Video'),
-                                              onTap: selectVideo,
+                                              leading: const Icon(Icons.picture_as_pdf),
+                                              title: const Text('PDF'),
+                                              onTap: selectPDF,
                                             ),
                                           ],
                                         ),

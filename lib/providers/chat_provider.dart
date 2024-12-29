@@ -131,14 +131,13 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
-  // send file message to firestore
   Future<void> sendFileMessage({
     required UserModel sender,
     required String contactUID,
     required String contactName,
     required String contactImage,
     required File file,
-    required MessageEnum messageType,
+    required MessageEnum messageType, // Asegúrate de pasar MessageEnum.file para archivos PDF
     required String groupId,
     required Function onSucess,
     required Function(String) onError,
@@ -148,22 +147,27 @@ class ChatProvider extends ChangeNotifier {
     try {
       var messageId = const Uuid().v4();
 
-      // 1. check if its a message reply and add the replied message to the message
+      // 1. check if it's a message reply and add the replied message to the message
       String repliedMessage = _messageReplyModel?.message ?? '';
       String repliedTo = _messageReplyModel == null
           ? ''
           : _messageReplyModel!.isMe
-              ? 'You'
-              : _messageReplyModel!.senderName;
+          ? 'You'
+          : _messageReplyModel!.senderName;
       MessageEnum repliedMessageType =
           _messageReplyModel?.messageType ?? MessageEnum.text;
 
-      // 2. upload file to firebase storage
+      // 2. Verify the file type if needed (e.g., only allow PDFs)
+      if (messageType == MessageEnum.file && !file.path.endsWith('.pdf')) {
+        throw Exception("Only PDF files are allowed.");
+      }
+
+      // 3. upload file to Firebase Storage
       final ref =
           '${Constants.chatFiles}/${messageType.name}/${sender.uid}/$contactUID/$messageId';
       String fileUrl = await storeFileToStorage(file: file, reference: ref);
 
-      // 3. update/set the messagemodel
+      // 4. update/set the MessageModel
       final messageModel = MessageModel(
         senderUID: sender.uid,
         senderName: sender.name,
@@ -182,10 +186,9 @@ class ChatProvider extends ChangeNotifier {
         deletedBy: [],
       );
 
-      // 4. check if its a group message and send to group else send to contact
+      // 5. Check if it's a group message and send to group, else send to contact
       if (groupId.isNotEmpty) {
-        // handle group message
-        // handle group message
+        // Handle group message
         await _firestore
             .collection(Constants.groups)
             .doc(groupId)
@@ -193,21 +196,15 @@ class ChatProvider extends ChangeNotifier {
             .doc(messageId)
             .set(messageModel.toMap());
 
-        // update the last message fo the group
+        // Update the last message for the group
         await _firestore.collection(Constants.groups).doc(groupId).update({
-          Constants.lastMessage: fileUrl,
+          Constants.lastMessage: "📄 PDF file",
           Constants.timeSent: DateTime.now().millisecondsSinceEpoch,
           Constants.senderUID: sender.uid,
           Constants.messageType: messageType.name,
         });
-
-        // set loading to true
-        setLoading(false);
-        onSucess();
-        // set message reply model to null
-        setMessageReplyModel(null);
       } else {
-        // handle contact message
+        // Handle contact message
         await handleContactMessage(
           messageModel: messageModel,
           contactUID: contactUID,
@@ -216,16 +213,21 @@ class ChatProvider extends ChangeNotifier {
           onSucess: onSucess,
           onError: onError,
         );
-
-        // set message reply model to null
-        setMessageReplyModel(null);
       }
+
+      // Set message reply model to null
+      setMessageReplyModel(null);
+
+      // set loading to false
+      setLoading(false);
+      onSucess();
     } catch (e) {
-      // set loading to true
+      // set loading to false
       setLoading(false);
       onError(e.toString());
     }
   }
+
 
   Future<void> handleContactMessage({
     required MessageModel messageModel,
