@@ -10,13 +10,10 @@ import 'package:flutter_chat_pro/firebase_options.dart';
 import 'package:flutter_chat_pro/main_screen/chat_screen.dart';
 import 'package:flutter_chat_pro/main_screen/friend_requests_screen.dart';
 import 'package:flutter_chat_pro/main_screen/friends_screen.dart';
-import 'package:flutter_chat_pro/main_screen/group_information_screen.dart';
-import 'package:flutter_chat_pro/main_screen/group_settings_screen.dart';
 import 'package:flutter_chat_pro/main_screen/home_screen.dart';
 import 'package:flutter_chat_pro/main_screen/profile_screen.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/providers/chat_provider.dart';
-import 'package:flutter_chat_pro/providers/group_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -30,7 +27,6 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
-        ChangeNotifierProvider(create: (_) => GroupProvider()),
       ],
       child: MyApp(savedThemeMode: savedThemeMode),
     ),
@@ -68,17 +64,13 @@ class MyApp extends StatelessWidget {
           Constants.loginScreen: (context) => const LoginScreen(),
           Constants.otpScreen: (context) => const OTPScreen(),
           Constants.userInformationScreen: (context) =>
-              const UserInformationScreen(),
+          const UserInformationScreen(),
           Constants.homeScreen: (context) => const HomeScreen(),
           Constants.profileScreen: (context) => const ProfileScreen(),
           Constants.friendsScreen: (context) => const FriendsScreen(),
           Constants.friendRequestsScreen: (context) =>
-              const FriendRequestScreen(),
+          const FriendRequestScreen(),
           Constants.chatScreen: (context) => const ChatScreen(),
-          Constants.groupSettingsScreen: (context) =>
-              const GroupSettingsScreen(),
-          Constants.groupInformationScreen: (context) =>
-              const GroupInformationScreen(),
         },
       ),
     );

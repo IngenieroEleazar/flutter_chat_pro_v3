@@ -9,13 +9,9 @@ class FriendsList extends StatelessWidget {
   const FriendsList({
     super.key,
     required this.viewType,
-    this.groupId = '',
-    this.groupMembersUIDs = const [],
   });
 
   final FriendViewType viewType;
-  final String groupId;
-  final List<String> groupMembersUIDs;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +39,6 @@ class FriendsList extends StatelessWidget {
               return FriendWidget(
                 friend: data,
                 viewType: viewType,
-                groupId: groupId,
               );
             },
           );

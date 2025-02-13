@@ -76,7 +76,7 @@ class MessageReplyPreview extends StatelessWidget {
       child: Container(
           decoration: BoxDecoration(
             color:
-                Theme.of(context).textTheme.titleLarge!.color!.withOpacity(0.1),
+            Theme.of(context).textTheme.titleLarge!.color!.withOpacity(0.1),
             borderRadius: BorderRadius.circular(25),
             border: Border.all(
               color: Theme.of(context).textTheme.titleLarge!.color!,
@@ -96,18 +96,18 @@ class MessageReplyPreview extends StatelessWidget {
         const SizedBox(height: 5),
         replyMessageModel != null
             ? messageToShow(
-                type: type,
-                message: replyMessageModel!.message,
-              )
+          type: type,
+          message: replyMessageModel!.message,
+        )
             : DisplayMessageType(
-                message: message!.repliedMessage,
-                type: message!.repliedMessageType,
-                color: Colors.white,
-                isReply: true,
-                maxLines: 1,
-                overFlow: TextOverflow.ellipsis,
-                viewOnly: viewOnly,
-              ),
+          message: message!.repliedMessage,
+          type: message!.repliedMessageType,
+          color: Colors.white,
+          isReply: true,
+          maxLines: 1,
+          overFlow: TextOverflow.ellipsis,
+          viewOnly: viewOnly,
+        ),
       ],
     );
   }
@@ -120,7 +120,6 @@ class MessageReplyPreview extends StatelessWidget {
         style: GoogleFonts.openSans(
           fontWeight: FontWeight.bold,
           color: Colors.blue,
-          //fontSize: 12,
         ),
       );
     } else {
@@ -129,7 +128,6 @@ class MessageReplyPreview extends StatelessWidget {
         style: GoogleFonts.openSans(
           fontWeight: FontWeight.bold,
           color: Colors.blue,
-          //fontSize: 12,
         ),
       );
     }

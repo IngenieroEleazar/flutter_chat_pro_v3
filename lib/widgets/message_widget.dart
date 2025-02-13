@@ -8,13 +8,11 @@ class MessageWidget extends StatelessWidget {
     required this.message,
     required this.onRightSwipe,
     required this.isMe,
-    required this.isGroupChat,
   });
 
   final MessageModel message;
   final Function() onRightSwipe;
   final bool isMe;
-  final bool isGroupChat;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +20,6 @@ class MessageWidget extends StatelessWidget {
       onRightSwipe: onRightSwipe,
       message: message,
       isMe: isMe,
-      isGroupChat: isGroupChat,
     );
   }
 }

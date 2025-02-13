@@ -9,11 +9,9 @@ class ChatsStream extends StatelessWidget {
   const ChatsStream({
     super.key,
     required this.uid,
-    this.groupId = '',
   });
 
   final String uid;
-  final String groupId;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +37,6 @@ class ChatsStream extends StatelessWidget {
 
               return ChatWidget(
                 chat: chat,
-                isGroup: false,
                 onTap: () {
                   Navigator.pushNamed(
                     context,
@@ -48,7 +45,6 @@ class ChatsStream extends StatelessWidget {
                       Constants.contactUID: chat.contactUID,
                       Constants.contactName: chat.contactName,
                       Constants.contactImage: chat.contactImage,
-                      Constants.groupId: '',
                     },
                   );
                 },

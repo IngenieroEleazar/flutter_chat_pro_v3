@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_pro/constants.dart';
 import 'package:flutter_chat_pro/enums/enums.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/providers/chat_provider.dart';
-import 'package:flutter_chat_pro/providers/group_provider.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
 import 'package:flutter_chat_pro/widgets/message_reply_preview.dart';
 import 'package:flutter_sound_record/flutter_sound_record.dart';
@@ -21,13 +19,11 @@ class BottomChatField extends StatefulWidget {
     required this.contactUID,
     required this.contactName,
     required this.contactImage,
-    required this.groupId,
   });
 
   final String contactUID;
   final String contactName;
   final String contactImage;
-  final String groupId;
 
   @override
   State<BottomChatField> createState() => _BottomChatFieldState();
@@ -228,7 +224,6 @@ class _BottomChatFieldState extends State<BottomChatField> {
       contactImage: widget.contactImage,
       file: File(filePath),
       messageType: messageType,
-      groupId: widget.groupId,
       onSucess: () {
         _textEditingController.clear();
         _focusNode.unfocus();
@@ -257,7 +252,6 @@ class _BottomChatFieldState extends State<BottomChatField> {
         contactImage: widget.contactImage,
         message: _textEditingController.text,
         messageType: MessageEnum.text,
-        groupId: widget.groupId,
         onSucess: () {
           _textEditingController.clear();
           _focusNode.unfocus();
@@ -269,73 +263,7 @@ class _BottomChatFieldState extends State<BottomChatField> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.groupId.isNotEmpty
-        ? buildLoackedMessages()
-        : buildBottomChatField();
-  }
-
-  Widget buildLoackedMessages() {
-    final uid = context.read<AuthenticationProvider>().userModel!.uid;
-
-    final groupProvider = context.read<GroupProvider>();
-    // check if is admin
-    final isAdmin = groupProvider.groupModel.adminsUIDs.contains(uid);
-
-    // chec if is member
-    final isMember = groupProvider.groupModel.membersUIDs.contains(uid);
-
-    // check is messages are locked
-    final isLocked = groupProvider.groupModel.lockMessages;
-    return isAdmin
-        ? buildBottomChatField()
-        : isMember
-            ? buildisMember(isLocked)
-            : SizedBox(
-                height: 60,
-                child: Center(
-                  child: TextButton(
-                    onPressed: () async {
-                      // send request to join group
-                      await groupProvider
-                          .sendRequestToJoinGroup(
-                        groupId: groupProvider.groupModel.groupId,
-                        uid: uid,
-                        groupName: groupProvider.groupModel.groupName,
-                        groupImage: groupProvider.groupModel.groupImage,
-                      )
-                          .whenComplete(() {
-                        showSnackBar(context, 'Request sent');
-                      });
-                      print('request to join group');
-                    },
-                    child: const Text(
-                      'You are not a member of this group, \n click here to send request to join',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-  }
-
-  buildisMember(bool isLocked) {
-    return isLocked
-        ? const SizedBox(
-            height: 50,
-            child: Center(
-              child: Text(
-                'Messages are locked, only admins can send messages',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          )
-        : buildBottomChatField();
+    return buildBottomChatField();
   }
 
   Consumer<ChatProvider> buildBottomChatField() {
@@ -356,8 +284,8 @@ class _BottomChatFieldState extends State<BottomChatField> {
                 children: [
                   isMessageReply
                       ? MessageReplyPreview(
-                          replyMessageModel: messageReply,
-                        )
+                    replyMessageModel: messageReply,
+                  )
                       : const SizedBox.shrink(),
                   Row(
                     children: [
@@ -373,52 +301,52 @@ class _BottomChatFieldState extends State<BottomChatField> {
                         onPressed: isSendingAudio
                             ? null
                             : () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) {
-                                    return SizedBox(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            // select image from camera
-                                            ListTile(
-                                              leading:
-                                                  const Icon(Icons.camera_alt),
-                                              title: const Text('Camera'),
-                                              onTap: () {
-                                                selectImage(true);
-                                              },
-                                            ),
-                                            // select image from gallery
-                                            ListTile(
-                                              leading: const Icon(Icons.image),
-                                              title: const Text('Gallery'),
-                                              onTap: () {
-                                                selectImage(false);
-                                              },
-                                            ),
-                                            // select a video file from device
-                                            // ListTile(
-                                            //   leading: const Icon(
-                                            //       Icons.video_library),
-                                            //   title: const Text('Video'),
-                                            //   onTap: selectVideo,
-                                            // ),
-                                            // seleccionar un archivo PDF
-                                            ListTile(
-                                              leading: const Icon(Icons.picture_as_pdf),
-                                              title: const Text('PDF'),
-                                              onTap: selectPDF,
-                                            ),
-                                          ],
-                                        ),
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return SizedBox(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // select image from camera
+                                      ListTile(
+                                        leading:
+                                        const Icon(Icons.camera_alt),
+                                        title: const Text('Camera'),
+                                        onTap: () {
+                                          selectImage(true);
+                                        },
                                       ),
-                                    );
-                                  },
-                                );
-                              },
+                                      // select image from gallery
+                                      ListTile(
+                                        leading: const Icon(Icons.image),
+                                        title: const Text('Gallery'),
+                                        onTap: () {
+                                          selectImage(false);
+                                        },
+                                      ),
+                                      // select a video file from device
+                                      // ListTile(
+                                      //   leading: const Icon(
+                                      //       Icons.video_library),
+                                      //   title: const Text('Video'),
+                                      //   onTap: selectVideo,
+                                      // ),
+                                      // seleccionar un archivo PDF
+                                      ListTile(
+                                        leading: const Icon(Icons.picture_as_pdf),
+                                        title: const Text('PDF'),
+                                        onTap: selectPDF,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
                         icon: const Icon(Icons.attachment),
                       ),
                       Expanded(
@@ -446,34 +374,34 @@ class _BottomChatFieldState extends State<BottomChatField> {
                       ),
                       chatProvider.isLoading
                           ? const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: CircularProgressIndicator(),
-                            )
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(),
+                      )
                           : GestureDetector(
-                              onTap: isShowSendButton ? sendTextMessage : null,
-                              onLongPress:
-                                  isShowSendButton ? null : startRecording,
-                              onLongPressUp: stopRecording,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: Colors.deepPurple,
-                                ),
-                                margin: const EdgeInsets.all(5),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: isShowSendButton
-                                      ? const Icon(
-                                          Icons.arrow_upward,
-                                          color: Colors.white,
-                                        )
-                                      : const Icon(
-                                          Icons.mic,
-                                          color: Colors.white,
-                                        ),
-                                ),
-                              ),
+                        onTap: isShowSendButton ? sendTextMessage : null,
+                        onLongPress:
+                        isShowSendButton ? null : startRecording,
+                        onLongPressUp: stopRecording,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Colors.deepPurple,
+                          ),
+                          margin: const EdgeInsets.all(5),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: isShowSendButton
+                                ? const Icon(
+                              Icons.arrow_upward,
+                              color: Colors.white,
+                            )
+                                : const Icon(
+                              Icons.mic,
+                              color: Colors.white,
                             ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -482,46 +410,46 @@ class _BottomChatFieldState extends State<BottomChatField> {
             // show emoji container
             isShowEmojiPicker
                 ? SizedBox(
-                    height: 280,
-                    child: EmojiPicker(
-                      onEmojiSelected: (category, Emoji emoji) {
-                        _textEditingController.text =
-                            _textEditingController.text + emoji.emoji;
+              height: 280,
+              child: EmojiPicker(
+                onEmojiSelected: (category, Emoji emoji) {
+                  _textEditingController.text =
+                      _textEditingController.text + emoji.emoji;
 
-                        if (!isShowSendButton) {
-                          setState(() {
-                            isShowSendButton = true;
-                          });
-                        }
-                      },
-                      onBackspacePressed: () {
-                        _textEditingController.text = _textEditingController
-                            .text.characters
-                            .skipLast(1)
-                            .toString();
-                      },
-                      // config: const Config(
-                      //   columns: 7,
-                      //   emojiSizeMax: 32.0,
-                      //   verticalSpacing: 0,
-                      //   horizontalSpacing: 0,
-                      //   initCategory: Category.RECENT,
-                      //   bgColor: Color(0xFFF2F2F2),
-                      //   indicatorColor: Colors.blue,
-                      //   iconColor: Colors.grey,
-                      //   iconColorSelected: Colors.blue,
-                      //   progressIndicatorColor: Colors.blue,
-                      //   backspaceColor: Colors.blue,
-                      //   showRecentsTab: true,
-                      //   recentsLimit: 28,
-                      //   noRecentsText: 'No Recents',
-                      //   noRecentsStyle: const TextStyle(fontSize: 20, color: Colors.black26),
-                      //   tabIndicatorAnimDuration: kTabScrollDuration,
-                      //   categoryIcons: const CategoryIcons(),
-                      //   buttonMode: ButtonMode.MATERIAL,
-                      // ),
-                    ),
-                  )
+                  if (!isShowSendButton) {
+                    setState(() {
+                      isShowSendButton = true;
+                    });
+                  }
+                },
+                onBackspacePressed: () {
+                  _textEditingController.text = _textEditingController
+                      .text.characters
+                      .skipLast(1)
+                      .toString();
+                },
+                // config: const Config(
+                //   columns: 7,
+                //   emojiSizeMax: 32.0,
+                //   verticalSpacing: 0,
+                //   horizontalSpacing: 0,
+                //   initCategory: Category.RECENT,
+                //   bgColor: Color(0xFFF2F2F2),
+                //   indicatorColor: Colors.blue,
+                //   iconColor: Colors.grey,
+                //   iconColorSelected: Colors.blue,
+                //   progressIndicatorColor: Colors.blue,
+                //   backspaceColor: Colors.blue,
+                //   showRecentsTab: true,
+                //   recentsLimit: 28,
+                //   noRecentsText: 'No Recents',
+                //   noRecentsStyle: const TextStyle(fontSize: 20, color: Colors.black26),
+                //   tabIndicatorAnimDuration: kTabScrollDuration,
+                //   categoryIcons: const CategoryIcons(),
+                //   buttonMode: ButtonMode.MATERIAL,
+                // ),
+              ),
+            )
                 : const SizedBox.shrink(),
           ],
         );

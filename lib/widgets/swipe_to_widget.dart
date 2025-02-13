@@ -10,28 +10,25 @@ class SwipeToWidget extends StatelessWidget {
     required this.onRightSwipe,
     required this.message,
     required this.isMe,
-    required this.isGroupChat,
   });
 
   final Function() onRightSwipe;
   final MessageModel message;
   final bool isMe;
-  final bool isGroupChat;
 
   @override
   Widget build(BuildContext context) {
     return SwipeTo(
-        onRightSwipe: (details) {
-          onRightSwipe();
-        },
-        child: isMe
-            ? AlignMessageRightWidget(
-                message: message,
-                isGroupChat: isGroupChat,
-              )
-            : AlignMessageLeftWidget(
-                message: message,
-                isGroupChat: isGroupChat,
-              ));
+      onRightSwipe: (details) {
+        onRightSwipe();
+      },
+      child: isMe
+          ? AlignMessageRightWidget(
+        message: message,
+      )
+          : AlignMessageLeftWidget(
+        message: message,
+      ),
+    );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_pro/models/group_model.dart';
 import 'package:flutter_chat_pro/models/last_message_model.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
@@ -10,40 +9,32 @@ import 'package:provider/provider.dart';
 class ChatWidget extends StatelessWidget {
   const ChatWidget({
     super.key,
-    this.chat,
-    this.group,
-    required this.isGroup,
+    required this.chat,
     required this.onTap,
   });
 
-  final LastMessageModel? chat;
-  final GroupModel? group;
-  final bool isGroup;
+  final LastMessageModel chat;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final uid = context.read<AuthenticationProvider>().userModel!.uid;
     // get the last message
-    final lastMessage = chat != null ? chat!.message : group!.lastMessage;
+    final lastMessage = chat.message;
     // get the senderUID
-    final senderUID = chat != null ? chat!.senderUID : group!.senderUID;
-
+    final senderUID = chat.senderUID;
     // get the date and time
-    final timeSent = chat != null ? chat!.timeSent : group!.timeSent;
+    final timeSent = chat.timeSent;
     final dateTime = formatDate(timeSent, [hh, ':', nn, ' ', am]);
-
     // get the image url
-    final imageUrl = chat != null ? chat!.contactImage : group!.groupImage;
-
+    final imageUrl = chat.contactImage;
     // get the name
-    final name = chat != null ? chat!.contactName : group!.groupName;
-
+    final name = chat.contactName;
     // get the contactUID
-    final contactUID = chat != null ? chat!.contactUID : group!.groupId;
-
+    final contactUID = chat.contactUID;
     // get the messageType
-    final messageType = chat != null ? chat!.messageType : group!.messageType;
+    final messageType = chat.messageType;
+
     return ListTile(
       leading: userImageWidget(
         imageUrl: imageUrl,
@@ -51,19 +42,24 @@ class ChatWidget extends StatelessWidget {
         onTap: () {},
       ),
       contentPadding: EdgeInsets.zero,
-      title: Text(name),
+      title: Text(
+        name,
+        overflow: TextOverflow.ellipsis,
+      ),
       subtitle: Row(
         children: [
           uid == senderUID
               ? const Text(
-                  'You:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                )
+            'You:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          )
               : const SizedBox(),
           const SizedBox(width: 5),
-          messageToShow(
-            type: messageType,
-            message: lastMessage,
+          Flexible(
+            child: messageToShow(
+              type: messageType,
+              message: lastMessage,
+            ),
           ),
         ],
       ),
@@ -72,11 +68,13 @@ class ChatWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(dateTime),
+            Text(
+              dateTime,
+              overflow: TextOverflow.ellipsis,
+            ),
             UnreadMessageCounter(
               uid: uid,
               contactUID: contactUID,
-              isGroup: isGroup,
             )
           ],
         ),

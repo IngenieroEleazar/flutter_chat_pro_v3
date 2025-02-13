@@ -5,9 +5,7 @@ import 'package:flutter_chat_pro/widgets/app_bar_back_button.dart';
 import 'package:flutter_chat_pro/widgets/friends_list.dart';
 
 class FriendRequestScreen extends StatefulWidget {
-  const FriendRequestScreen({super.key, this.groupId = ''});
-
-  final String groupId;
+  const FriendRequestScreen({super.key});
 
   @override
   State<FriendRequestScreen> createState() => _FriendRequestScreenState();
@@ -30,7 +28,6 @@ class _FriendRequestScreenState extends State<FriendRequestScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            // cupertinosearchbar
             CupertinoSearchTextField(
               placeholder: 'Search',
               style: const TextStyle(color: Colors.white),
@@ -38,12 +35,11 @@ class _FriendRequestScreenState extends State<FriendRequestScreen> {
                 print(value);
               },
             ),
-
-            Expanded(
-                child: FriendsList(
-              viewType: FriendViewType.friendRequests,
-              groupId: widget.groupId,
-            )),
+            const Expanded(
+              child: FriendsList(
+                viewType: FriendViewType.friendRequests,
+              ),
+            ),
           ],
         ),
       ),

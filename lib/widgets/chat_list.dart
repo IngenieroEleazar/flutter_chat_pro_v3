@@ -5,7 +5,6 @@ import 'package:flutter_chat_pro/models/message_model.dart';
 import 'package:flutter_chat_pro/models/message_reply_model.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/providers/chat_provider.dart';
-import 'package:flutter_chat_pro/providers/group_provider.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
 import 'package:flutter_chat_pro/widgets/align_message_left_widget.dart';
 import 'package:flutter_chat_pro/widgets/align_message_right_widget.dart';
@@ -20,11 +19,9 @@ class ChatList extends StatefulWidget {
   const ChatList({
     super.key,
     required this.contactUID,
-    required this.groupId,
   });
 
   final String contactUID;
-  final String groupId;
 
   @override
   State<ChatList> createState() => _ChatListState();
@@ -44,7 +41,7 @@ class _ChatListState extends State<ChatList> {
       {required String item, required MessageModel message}) {
     switch (item) {
       case 'Reply':
-        // set the message reply to true
+      // set the message reply to true
         final messageReply = MessageReplyModel(
           message: message.message,
           senderUID: message.senderUID,
@@ -57,33 +54,14 @@ class _ChatListState extends State<ChatList> {
         context.read<ChatProvider>().setMessageReplyModel(messageReply);
         break;
       case 'Copy':
-        // copy message to clipboard
+      // copy message to clipboard
         Clipboard.setData(ClipboardData(text: message.message));
         showSnackBar(context, 'Message copied to clipboard');
         break;
       case 'Delete':
         final currentUserId =
             context.read<AuthenticationProvider>().userModel!.uid;
-        final groupProvider = context.read<GroupProvider>();
 
-        if (widget.groupId.isNotEmpty) {
-          if (groupProvider.isSenderOrAdmin(
-              message: message, uid: currentUserId)) {
-            showDeletBottomSheet(
-              message: message,
-              currentUserId: currentUserId,
-              isSenderOrAdmin: true,
-            );
-            return;
-          } else {
-            showDeletBottomSheet(
-              message: message,
-              currentUserId: currentUserId,
-              isSenderOrAdmin: false,
-            );
-            return;
-          }
-        }
         showDeletBottomSheet(
           message: message,
           currentUserId: currentUserId,
@@ -99,11 +77,11 @@ class _ChatListState extends State<ChatList> {
     required bool isSenderOrAdmin,
   }) {
     showModalBottomSheet(
-        context: context,
-        isDismissible: false,
-        builder: (context) {
-          return Consumer<ChatProvider>(
-              builder: (context, chatProvider, child) {
+      context: context,
+      isDismissible: false,
+      builder: (context) {
+        return Consumer<ChatProvider>(
+          builder: (context, chatProvider, child) {
             return SizedBox(
               width: double.infinity,
               child: Padding(
@@ -121,41 +99,39 @@ class _ChatListState extends State<ChatList> {
                       onTap: chatProvider.isLoading
                           ? null
                           : () async {
-                              await chatProvider
-                                  .deleteMessage(
-                                currentUserId: currentUserId,
-                                contactUID: widget.contactUID,
-                                messageId: message.messageId,
-                                messageType: message.messageType.name,
-                                isGroupChat: widget.groupId.isNotEmpty,
-                                deleteForEveryone: false,
-                              )
-                                  .whenComplete(() {
-                                Navigator.pop(context);
-                              });
-                            },
+                        await chatProvider
+                            .deleteMessage(
+                          currentUserId: currentUserId,
+                          contactUID: widget.contactUID,
+                          messageId: message.messageId,
+                          messageType: message.messageType.name,
+                          deleteForEveryone: false,
+                        )
+                            .whenComplete(() {
+                          Navigator.pop(context);
+                        });
+                      },
                     ),
                     isSenderOrAdmin
                         ? ListTile(
-                            leading: const Icon(Icons.delete_forever),
-                            title: const Text('Delete for everyone'),
-                            onTap: chatProvider.isLoading
-                                ? null
-                                : () async {
-                                    await chatProvider
-                                        .deleteMessage(
-                                      currentUserId: currentUserId,
-                                      contactUID: widget.contactUID,
-                                      messageId: message.messageId,
-                                      messageType: message.messageType.name,
-                                      isGroupChat: widget.groupId.isNotEmpty,
-                                      deleteForEveryone: true,
-                                    )
-                                        .whenComplete(() {
-                                      Navigator.pop(context);
-                                    });
-                                  },
-                          )
+                      leading: const Icon(Icons.delete_forever),
+                      title: const Text('Delete for everyone'),
+                      onTap: chatProvider.isLoading
+                          ? null
+                          : () async {
+                        await chatProvider
+                            .deleteMessage(
+                          currentUserId: currentUserId,
+                          contactUID: widget.contactUID,
+                          messageId: message.messageId,
+                          messageType: message.messageType.name,
+                          deleteForEveryone: true,
+                        )
+                            .whenComplete(() {
+                          Navigator.pop(context);
+                        });
+                      },
+                    )
                         : const SizedBox.shrink(),
                     ListTile(
                       leading: const Icon(Icons.cancel),
@@ -163,15 +139,17 @@ class _ChatListState extends State<ChatList> {
                       onTap: chatProvider.isLoading
                           ? null
                           : () {
-                              Navigator.pop(context);
-                            },
+                        Navigator.pop(context);
+                      },
                     ),
                   ],
                 ),
               ),
             );
-          });
-        });
+          },
+        );
+      },
+    );
   }
 
   void sendReactionToMessage(
@@ -180,12 +158,11 @@ class _ChatListState extends State<ChatList> {
     final senderUID = context.read<AuthenticationProvider>().userModel!.uid;
 
     context.read<ChatProvider>().sendReactionToMessage(
-          senderUID: senderUID,
-          contactUID: widget.contactUID,
-          messageId: messageId,
-          reaction: reaction,
-          groupId: widget.groupId.isNotEmpty,
-        );
+      senderUID: senderUID,
+      contactUID: widget.contactUID,
+      messageId: messageId,
+      reaction: reaction,
+    );
   }
 
   void showEmojiContainer({required String messageId}) {
@@ -213,12 +190,10 @@ class _ChatListState extends State<ChatList> {
     final authProvider = context.read<AuthenticationProvider>();
     final uid = authProvider.userModel!.uid;
 
-
     return StreamBuilder<List<MessageModel>>(
       stream: context.read<ChatProvider>().getMessagesStream(
         userId: uid,
         contactUID: widget.contactUID,
-        isGroup: widget.groupId,
       ),
       builder: (context, snapshot) {
         // Manejo de errores
@@ -284,26 +259,14 @@ class _ChatListState extends State<ChatList> {
           itemBuilder: (context, dynamic element) {
             final message = element as MessageModel;
 
-            // Si es un chat grupal, marcar mensajes como vistos automáticamente
-            if (widget.groupId.isNotEmpty) {
+            // Marcar mensaje como visto si no es del remitente actual
+            if (!message.isSeen && message.senderUID != uid) {
               context.read<ChatProvider>().setMessageStatus(
                 currentUserId: uid,
                 contactUID: widget.contactUID,
                 messageId: message.messageId,
                 isSeenByList: message.isSeenBy,
-                isGroupChat: true,
               );
-            } else {
-              // Marcar mensaje como visto si no es del remitente actual
-              if (!message.isSeen && message.senderUID != uid) {
-                context.read<ChatProvider>().setMessageStatus(
-                  currentUserId: uid,
-                  contactUID: widget.contactUID,
-                  messageId: message.messageId,
-                  isSeenByList: message.isSeenBy,
-                  isGroupChat: false,
-                );
-              }
             }
 
             // Verificar si el mensaje fue eliminado por el usuario actual
@@ -326,12 +289,10 @@ class _ChatListState extends State<ChatList> {
                             ? AlignMessageRightWidget(
                           message: message,
                           viewOnly: true,
-                          isGroupChat: widget.groupId.isNotEmpty,
                         )
                             : AlignMessageLeftWidget(
                           message: message,
                           viewOnly: true,
-                          isGroupChat: widget.groupId.isNotEmpty,
                         ),
                         onReactionTap: (reaction) {
                           if (reaction == '➕') {
@@ -377,7 +338,6 @@ class _ChatListState extends State<ChatList> {
                         .setMessageReplyModel(messageReply);
                   },
                   isMe: isMe,
-                  isGroupChat: widget.groupId.isNotEmpty,
                 ),
               ),
             );

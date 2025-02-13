@@ -35,7 +35,6 @@ class AuthenticationProvider extends ChangeNotifier {
     return snapshot.docs.map((doc) => UserModel.fromMap(doc.data())).toList();
   }
 
-
   // chech authentication state
   Future<bool> checkAuthenticationState() async {
     bool isSignedIn = false;
@@ -62,7 +61,7 @@ class AuthenticationProvider extends ChangeNotifier {
   // chech if user exists
   Future<bool> checkUserExists() async {
     DocumentSnapshot documentSnapshot =
-        await _firestore.collection(Constants.users).doc(_uid).get();
+    await _firestore.collection(Constants.users).doc(_uid).get();
     if (documentSnapshot.exists) {
       return true;
     } else {
@@ -81,7 +80,7 @@ class AuthenticationProvider extends ChangeNotifier {
   // get user data from firestore
   Future<void> getUserDataFromFireStore() async {
     DocumentSnapshot documentSnapshot =
-        await _firestore.collection(Constants.users).doc(_uid).get();
+    await _firestore.collection(Constants.users).doc(_uid).get();
     _userModel =
         UserModel.fromMap(documentSnapshot.data() as Map<String, dynamic>);
     notifyListeners();
@@ -91,7 +90,7 @@ class AuthenticationProvider extends ChangeNotifier {
   Future<void> saveUserDataToSharedPreferences() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setString(
-        Constants.userModel, jsonEncode(userModel!.toMap()));
+        Constants.userModel, jsonEncode(_userModel!.toMap()));
   }
 
   // get data from shared preferences
@@ -301,26 +300,19 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   // get a list of friends
-  Future<List<UserModel>> getFriendsList(
-    String uid,
-    List<String> groupMembersUIDs,
-  ) async {
+  Future<List<UserModel>> getFriendsList(String uid) async {
     List<UserModel> friendsList = [];
 
     DocumentSnapshot documentSnapshot =
-        await _firestore.collection(Constants.users).doc(uid).get();
+    await _firestore.collection(Constants.users).doc(uid).get();
 
     List<dynamic> friendsUIDs = documentSnapshot.get(Constants.friendsUIDs);
 
     for (String friendUID in friendsUIDs) {
-      // if groupMembersUIDs list is not empty and contains the friendUID we skip this friend
-      if (groupMembersUIDs.isNotEmpty && groupMembersUIDs.contains(friendUID)) {
-        continue;
-      }
       DocumentSnapshot documentSnapshot =
-          await _firestore.collection(Constants.users).doc(friendUID).get();
+      await _firestore.collection(Constants.users).doc(friendUID).get();
       UserModel friend =
-          UserModel.fromMap(documentSnapshot.data() as Map<String, dynamic>);
+      UserModel.fromMap(documentSnapshot.data() as Map<String, dynamic>);
       friendsList.add(friend);
     }
 
@@ -328,37 +320,14 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   // get a list of friend requests
-  Future<List<UserModel>> getFriendRequestsList({
-    required String uid,
-    required String groupId,
-  }) async {
+  Future<List<UserModel>> getFriendRequestsList({required String uid}) async {
     List<UserModel> friendRequestsList = [];
 
-    if (groupId.isNotEmpty) {
-      DocumentSnapshot documentSnapshot =
-          await _firestore.collection(Constants.groups).doc(groupId).get();
-
-      List<dynamic> requestsUIDs =
-          documentSnapshot.get(Constants.awaitingApprovalUIDs);
-
-      for (String friendRequestUID in requestsUIDs) {
-        DocumentSnapshot documentSnapshot = await _firestore
-            .collection(Constants.users)
-            .doc(friendRequestUID)
-            .get();
-        UserModel friendRequest =
-            UserModel.fromMap(documentSnapshot.data() as Map<String, dynamic>);
-        friendRequestsList.add(friendRequest);
-      }
-
-      return friendRequestsList;
-    }
-
     DocumentSnapshot documentSnapshot =
-        await _firestore.collection(Constants.users).doc(uid).get();
+    await _firestore.collection(Constants.users).doc(uid).get();
 
     List<dynamic> friendRequestsUIDs =
-        documentSnapshot.get(Constants.friendRequestsUIDs);
+    documentSnapshot.get(Constants.friendRequestsUIDs);
 
     for (String friendRequestUID in friendRequestsUIDs) {
       DocumentSnapshot documentSnapshot = await _firestore
@@ -366,7 +335,7 @@ class AuthenticationProvider extends ChangeNotifier {
           .doc(friendRequestUID)
           .get();
       UserModel friendRequest =
-          UserModel.fromMap(documentSnapshot.data() as Map<String, dynamic>);
+      UserModel.fromMap(documentSnapshot.data() as Map<String, dynamic>);
       friendRequestsList.add(friendRequest);
     }
 

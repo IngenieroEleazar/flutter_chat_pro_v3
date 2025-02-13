@@ -6,7 +6,7 @@ import 'package:flutter_chat_pro/models/user_model.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
 import 'package:flutter_chat_pro/widgets/app_bar_back_button.dart';
-import 'package:flutter_chat_pro/widgets/group_details_card.dart';
+import 'package:flutter_chat_pro/widgets/profile_details_card.dart';
 import 'package:flutter_chat_pro/widgets/settings_list_tile.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }
 
           final userModel =
-              UserModel.fromMap(snapshot.data!.data() as Map<String, dynamic>);
+          UserModel.fromMap(snapshot.data!.data() as Map<String, dynamic>);
 
           return SingleChildScrollView(
             child: Padding(
@@ -82,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  InfoDetailsCard(
+                  ProfileDetailsCard(
                     userModel: userModel,
                   ),
                   const SizedBox(height: 10),
@@ -211,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Navigator.pushNamedAndRemoveUntil(
                                       context,
                                       Constants.loginScreen,
-                                      (route) => false,
+                                          (route) => false,
                                     );
                                   });
                                 }

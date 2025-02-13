@@ -3,68 +3,9 @@ import 'package:flutter_chat_pro/constants.dart';
 import 'package:flutter_chat_pro/main_screen/friend_requests_screen.dart';
 import 'package:flutter_chat_pro/models/user_model.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
-import 'package:flutter_chat_pro/providers/group_provider.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
-class GroupStatusWidget extends StatelessWidget {
-  const GroupStatusWidget({
-    super.key,
-    required this.isAdmin,
-    required this.groupProvider,
-  });
-
-  final bool isAdmin;
-  final GroupProvider groupProvider;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        InkWell(
-          onTap: !isAdmin
-              ? null
-              : () {
-                  // show dialog to change group type
-                  showMyAnimatedDialog(
-                    context: context,
-                    title: 'Change Group Type',
-                    content:
-                        'Are you sure you want to change the group type to ${groupProvider.groupModel.isPrivate ? 'Public' : 'Private'}?',
-                    textAction: 'Change',
-                    onActionTap: (value) {
-                      if (value) {
-                        // change group type
-                        groupProvider.changeGroupType();
-                      }
-                    },
-                  );
-                },
-          child: Container(
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              color: isAdmin ? Colors.deepPurple : Colors.grey,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Text(
-              groupProvider.groupModel.isPrivate ? 'Private' : 'Public',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        GetRequestWidget(
-          groupProvider: groupProvider,
-          isAdmin: isAdmin,
-        ),
-      ],
-    );
-  }
-}
 
 class ProfileStatusWidget extends StatelessWidget {
   const ProfileStatusWidget({
@@ -125,7 +66,7 @@ class FriendsButton extends StatelessWidget {
         );
       } else {
         if (currentUser.uid != userModel.uid) {
-          // show cancle friend request button if the user sent us friend request
+          // show cancel friend request button if the user sent us friend request
           // else show send friend request button
           if (userModel.friendRequestsUIDs.contains(currentUser.uid)) {
             // show send friend request button
@@ -135,10 +76,10 @@ class FriendsButton extends StatelessWidget {
                     .read<AuthenticationProvider>()
                     .cancleFriendRequest(friendID: userModel.uid)
                     .whenComplete(() {
-                  showSnackBar(context, 'friend request canclled');
+                  showSnackBar(context, 'Friend request cancelled');
                 });
               },
-              label: 'Cancle Request',
+              label: 'Cancel Request',
               width: MediaQuery.of(context).size.width * 0.7,
               backgroundColor: Theme.of(context).cardColor,
               textColor: Theme.of(context).colorScheme.primary,
@@ -166,8 +107,8 @@ class FriendsButton extends StatelessWidget {
               children: [
                 MyElevatedButton(
                   onPressed: () async {
-                    // show unfriend dialog to ask the user if he is sure to unfriend
-                    // create a dialog to confirm logout
+                    // show unfriend dialog to ask the user if they are sure to unfriend
+                    // create a dialog to confirm unfriend
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -176,7 +117,7 @@ class FriendsButton extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         content: Text(
-                          'Are you sure you want to Unfriend ${userModel.name}?',
+                          'Are you sure you want to unfriend ${userModel.name}?',
                           textAlign: TextAlign.center,
                         ),
                         actions: [
@@ -213,14 +154,13 @@ class FriendsButton extends StatelessWidget {
                 MyElevatedButton(
                   onPressed: () async {
                     // navigate to chat screen
-                    // navigate to chat screen with the folowing arguments
-                    // 1. friend uid 2. friend name 3. friend image 4. groupId with an empty string
+                    // navigate to chat screen with the following arguments
+                    // 1. friend uid 2. friend name 3. friend image
                     Navigator.pushNamed(context, Constants.chatScreen,
                         arguments: {
                           Constants.contactUID: userModel.uid,
                           Constants.contactName: userModel.name,
                           Constants.contactImage: userModel.image,
-                          Constants.groupId: ''
                         });
                   },
                   label: 'Chat',
@@ -237,7 +177,7 @@ class FriendsButton extends StatelessWidget {
                     .read<AuthenticationProvider>()
                     .sendFriendRequest(friendID: userModel.uid)
                     .whenComplete(() {
-                  showSnackBar(context, 'friend request sent');
+                  showSnackBar(context, 'Friend request sent');
                 });
               },
               label: 'Send Request',
@@ -292,56 +232,6 @@ class FriendRequestButton extends StatelessWidget {
     }
 
     return buildFriendRequestButton();
-  }
-}
-
-class GetRequestWidget extends StatelessWidget {
-  const GetRequestWidget({
-    super.key,
-    required this.groupProvider,
-    required this.isAdmin,
-  });
-
-  final GroupProvider groupProvider;
-  final bool isAdmin;
-
-  @override
-  Widget build(BuildContext context) {
-    // get requestWidget
-    Widget getRequestWidget() {
-      // check if user is admin
-      if (isAdmin) {
-        // chec if there is any request
-        if (groupProvider.groupModel.awaitingApprovalUIDs.isNotEmpty) {
-          return InkWell(
-            onTap: () {
-              // navigate to add members screen
-              // navigate to friend requests screen
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return FriendRequestScreen(
-                  groupId: groupProvider.groupModel.groupId,
-                );
-              }));
-            },
-            child: const CircleAvatar(
-              radius: 18,
-              backgroundColor: Colors.orangeAccent,
-              child: Icon(
-                Icons.person_add,
-                color: Colors.white,
-                size: 15,
-              ),
-            ),
-          );
-        } else {
-          return const SizedBox();
-        }
-      } else {
-        return const SizedBox();
-      }
-    }
-
-    return getRequestWidget();
   }
 }
 

@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_pro/constants.dart';
-import 'package:flutter_chat_pro/main_screen/create_group_screen.dart';
 import 'package:flutter_chat_pro/main_screen/my_chats_screen.dart';
-import 'package:flutter_chat_pro/main_screen/groups_screen.dart';
 import 'package:flutter_chat_pro/main_screen/people_screen.dart';
 import 'package:flutter_chat_pro/main_screen/teachers_screen.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
-import 'package:flutter_chat_pro/providers/group_provider.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +22,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   final List<Widget> pages = const [
     MyChatsScreen(),
-    GroupsScreen(),
     PeopleScreen(),
     TeachersScreen(),
   ];
@@ -46,24 +42,24 @@ class _HomeScreenState extends State<HomeScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        // user comes back to the app
-        // update user status to online
+      // user comes back to the app
+      // update user status to online
         context.read<AuthenticationProvider>().updateUserStatus(
-              value: true,
-            );
+          value: true,
+        );
         break;
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
       case AppLifecycleState.hidden:
-        // app is inactive, paused, detached or hidden
-        // update user status to offline
+      // app is inactive, paused, detached or hidden
+      // update user status to offline
         context.read<AuthenticationProvider>().updateUserStatus(
-              value: false,
-            );
+          value: false,
+        );
         break;
       default:
-        // handle other states
+      // handle other states
         break;
     }
     super.didChangeAppLifecycleState(state);
@@ -102,36 +98,15 @@ class _HomeScreenState extends State<HomeScreen>
           },
           children: pages,
         ),
-        // floatingActionButton: currentIndex == 1
-        //     ? FloatingActionButton(
-        //         onPressed: () {
-        //           context
-        //               .read<GroupProvider>()
-        //               .clearGroupMembersList()
-        //               .whenComplete(() {
-        //             Navigator.of(context).push(
-        //               MaterialPageRoute(
-        //                 builder: (context) => const CreateGroupScreen(),
-        //               ),
-        //             );
-        //           });
-        //         },
-        //         child: const Icon(CupertinoIcons.add),
-        //       )
-        //     : null,
         bottomNavigationBar: BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.chat_bubble_2),
               label: 'Chats',
             ),
-             BottomNavigationBarItem(
-               icon: Icon(CupertinoIcons.group),
-               label: 'Grupos',
-           ),
             BottomNavigationBarItem(
-               icon: Icon(CupertinoIcons.globe),
-               label: 'People',
+              icon: Icon(CupertinoIcons.globe),
+              label: 'People',
             ),
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.person),

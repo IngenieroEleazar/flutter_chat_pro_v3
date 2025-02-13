@@ -1,7 +1,6 @@
 enum FriendViewType {
   friends,
   friendRequests,
-  groupView,
   allUsers,
 }
 
@@ -11,11 +10,6 @@ enum MessageEnum {
   video,
   audio,
   file,
-}
-
-enum GroupType {
-  private,
-  public,
 }
 
 // extension convertMessageEnumToString on String

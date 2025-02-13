@@ -10,18 +10,15 @@ class SearchStream extends StatelessWidget {
   const SearchStream({
     super.key,
     required this.uid,
-    this.groupId = '',
   });
 
   final String uid;
-  final String groupId;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(builder: ((context, chatProvider, child) {
       return StreamBuilder<QuerySnapshot>(
-          stream:
-              chatProvider.getLastMessageStream(userId: uid, groupId: groupId),
+          stream: chatProvider.getLastMessageStream(userId: uid),
           builder: (builderContext, snapshot) {
             if (snapshot.hasError) {
               return const Center(
@@ -54,7 +51,6 @@ class SearchStream extends StatelessWidget {
                       results.elementAt(index).data() as Map<String, dynamic>);
                   return ChatWidget(
                     chat: chat,
-                    isGroup: false,
                     onTap: () {
                       Navigator.pushNamed(
                         context,
@@ -63,7 +59,6 @@ class SearchStream extends StatelessWidget {
                           Constants.contactUID: chat.contactUID,
                           Constants.contactName: chat.contactName,
                           Constants.contactImage: chat.contactImage,
-                          Constants.groupId: groupId.isEmpty ? '' : groupId,
                         },
                       );
                     },

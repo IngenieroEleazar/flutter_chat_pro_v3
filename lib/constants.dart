@@ -1,5 +1,5 @@
 class Constants {
-// screens routs
+  // screens routes
   static const String landingScreen = '/landingScreen';
   static const String loginScreen = '/loginScreen';
   static const String otpScreen = '/otpScreen';
@@ -15,8 +15,6 @@ class Constants {
   static const String aboutScreen = '/aboutScreen';
   static const String privacyPolicyScreen = '/privacyPolicyScreen';
   static const String termsAndConditionsScreen = '/termsAndConditionsScreen';
-  static const String groupSettingsScreen = '/groupSettingsScreen';
-  static const String groupInformationScreen = '/groupInformationScreen';
 
   static const String uid = 'uid';
   static const String name = 'name';
@@ -40,7 +38,6 @@ class Constants {
 
   static const String contactName = 'contactName';
   static const String contactImage = 'contactImage';
-  static const String groupId = 'groupId';
 
   static const String senderUID = 'senderUID';
   static const String senderName = 'senderName';
@@ -62,24 +59,5 @@ class Constants {
   static const String lastMessage = 'lastMessage';
   static const String chats = 'chats';
   static const String messages = 'messages';
-  static const String groups = 'groups';
   static const chatFiles = 'chatFiles';
-
-  static const String private = 'private';
-  static const String public = 'public';
-
-  static const String creatorUID = 'creatorUID';
-  static const String groupName = 'groupName';
-  static const String groupDescription = 'groupDescription';
-  static const String groupImage = 'groupImage';
-  static const String isPrivate = 'isPrivate';
-  static const String editSettings = 'editSettings';
-  static const String approveMembers = 'approveMembers';
-  static const String lockMessages = 'lockMessages';
-  static const String requestToJoing = 'requestToJoing';
-  static const String membersUIDs = 'membersUIDs';
-  static const String adminsUIDs = 'adminsUIDs';
-  static const String awaitingApprovalUIDs = 'awaitingApprovalUIDs';
-
-  static const String groupImages = 'groupImages';
 }

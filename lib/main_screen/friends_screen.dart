@@ -39,8 +39,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
 
             const Expanded(
                 child: FriendsList(
-              viewType: FriendViewType.friends,
-            )),
+                  viewType: FriendViewType.friends,
+                )),
           ],
         ),
       ),

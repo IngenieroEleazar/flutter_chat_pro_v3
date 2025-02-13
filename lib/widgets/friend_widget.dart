@@ -11,14 +11,10 @@ class FriendWidget extends StatelessWidget {
     super.key,
     required this.friend,
     required this.viewType,
-    this.isAdminView = false,
-    this.groupId = '',
   });
 
   final UserModel friend;
   final FriendViewType viewType;
-  final bool isAdminView;
-  final String groupId;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +38,6 @@ class FriendWidget extends StatelessWidget {
           Constants.contactUID: friend.uid,
           Constants.contactName: friend.name,
           Constants.contactImage: friend.image,
-          Constants.groupId: ''
         });
       },
     );

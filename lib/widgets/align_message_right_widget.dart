@@ -13,12 +13,10 @@ class AlignMessageRightWidget extends StatelessWidget {
     super.key,
     required this.message,
     this.viewOnly = false,
-    required this.isGroupChat,
   });
 
   final MessageModel message;
   final bool viewOnly;
-  final bool isGroupChat;
 
   @override
   Widget build(BuildContext context) {
@@ -26,26 +24,14 @@ class AlignMessageRightWidget extends StatelessWidget {
     final isReplying = message.repliedTo.isNotEmpty;
     // get the reations from the list
     final messageReations =
-        message.reactions.map((e) => e.split('=')[1]).toList();
+    message.reactions.map((e) => e.split('=')[1]).toList();
     final padding = message.reactions.isNotEmpty
         ? const EdgeInsets.only(left: 20.0, bottom: 25.0)
         : const EdgeInsets.only(bottom: 0.0);
 
     bool messageSeen() {
       final uid = context.read<AuthenticationProvider>().userModel!.uid;
-      bool isSeen = false;
-      if (isGroupChat) {
-        List<String> isSeenByList = message.isSeenBy;
-        if (isSeenByList.contains(uid)) {
-          // remove our uid then check again
-          isSeenByList.remove(uid);
-        }
-        isSeen = isSeenByList.isNotEmpty ? true : false;
-      } else {
-        isSeen = message.isSeen ? true : false;
-      }
-
-      return isSeen;
+      return message.isSeen;
     }
 
     return Align(
@@ -53,7 +39,6 @@ class AlignMessageRightWidget extends StatelessWidget {
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.7,
-          //minWidth: MediaQuery.of(context).size.width * 0.3,
         ),
         child: Stack(
           children: [
@@ -107,7 +92,7 @@ class AlignMessageRightWidget extends StatelessWidget {
                             Icon(
                               messageSeen() ? Icons.done_all : Icons.done,
                               color:
-                                  messageSeen() ? Colors.blue : Colors.white60,
+                              messageSeen() ? Colors.blue : Colors.white60,
                               size: 15,
                             ),
                           ],
