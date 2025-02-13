@@ -8,8 +8,6 @@ import 'package:flutter_chat_pro/authentication/user_information_screen.dart';
 import 'package:flutter_chat_pro/constants.dart';
 import 'package:flutter_chat_pro/firebase_options.dart';
 import 'package:flutter_chat_pro/main_screen/chat_screen.dart';
-import 'package:flutter_chat_pro/main_screen/friend_requests_screen.dart';
-import 'package:flutter_chat_pro/main_screen/friends_screen.dart';
 import 'package:flutter_chat_pro/main_screen/home_screen.dart';
 import 'package:flutter_chat_pro/main_screen/profile_screen.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
@@ -67,9 +65,6 @@ class MyApp extends StatelessWidget {
           const UserInformationScreen(),
           Constants.homeScreen: (context) => const HomeScreen(),
           Constants.profileScreen: (context) => const ProfileScreen(),
-          Constants.friendsScreen: (context) => const FriendsScreen(),
-          Constants.friendRequestsScreen: (context) =>
-          const FriendRequestScreen(),
           Constants.chatScreen: (context) => const ChatScreen(),
         },
       ),

@@ -42,27 +42,27 @@ class DisplayMessageType extends StatelessWidget {
           return isReply
               ? const Icon(Icons.image)
               : CachedNetworkImage(
-                  width: 200,
-                  height: 200,
-                  imageUrl: message,
-                  fit: BoxFit.cover,
-                );
+            width: 200,
+            height: 200,
+            imageUrl: message,
+            fit: BoxFit.cover,
+          );
         case MessageEnum.video:
           return isReply
               ? const Icon(Icons.video_collection)
               : VideoPlayerWidget(
-                  videoUrl: message,
-                  color: color,
-                  viewOnly: viewOnly,
-                );
+            videoUrl: message,
+            color: color,
+            viewOnly: viewOnly,
+          );
         case MessageEnum.audio:
           return isReply
               ? const Icon(Icons.audiotrack)
               : AudioPlayerWidget(
-                  audioUrl: message,
-                  color: color,
-                  viewOnly: viewOnly,
-                );
+            audioUrl: message,
+            color: color,
+            viewOnly: viewOnly,
+          );
         default:
           return Text(
             message,

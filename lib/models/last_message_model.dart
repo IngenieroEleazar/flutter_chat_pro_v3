@@ -10,7 +10,7 @@ class LastMessageModel {
   MessageEnum messageType;
   DateTime timeSent;
   bool isSeen;
-  bool isAdmin; // Nuevo campo
+  bool isAdmin;
 
   LastMessageModel({
     required this.senderUID,
@@ -21,7 +21,7 @@ class LastMessageModel {
     required this.messageType,
     required this.timeSent,
     required this.isSeen,
-    this.isAdmin = false, // Valor por defecto
+    this.isAdmin = false,
   });
 
   // to map
@@ -35,7 +35,7 @@ class LastMessageModel {
       Constants.messageType: messageType.name,
       Constants.timeSent: timeSent.microsecondsSinceEpoch,
       Constants.isSeen: isSeen,
-      'isAdmin': isAdmin, // Agregar isAdmin al mapa
+      'isAdmin': isAdmin,
     };
   }
 
@@ -50,7 +50,7 @@ class LastMessageModel {
       messageType: map[Constants.messageType].toString().toMessageEnum(),
       timeSent: DateTime.fromMicrosecondsSinceEpoch(map[Constants.timeSent]),
       isSeen: map[Constants.isSeen] ?? false,
-      isAdmin: map['isAdmin'] ?? false, // Obtener isAdmin del mapa
+      isAdmin: map['isAdmin'] ?? false,
     );
   }
 
@@ -60,7 +60,7 @@ class LastMessageModel {
     String? contactName,
     String? contactImage,
     bool? isSeen,
-    bool? isAdmin, // Agregar isAdmin aquí
+    bool? isAdmin,
   }) {
     return LastMessageModel(
       senderUID: senderUID,
@@ -71,7 +71,7 @@ class LastMessageModel {
       messageType: messageType,
       timeSent: timeSent,
       isSeen: isSeen ?? this.isSeen,
-      isAdmin: isAdmin ?? this.isAdmin, // Copiar isAdmin
+      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 }

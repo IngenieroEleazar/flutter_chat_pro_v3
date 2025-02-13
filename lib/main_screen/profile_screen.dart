@@ -91,7 +91,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Text(
                       'Configuracion',
                       style: GoogleFonts.openSans(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -106,48 +108,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             // navigate to account settings
                           },
                         ),
-                        // SettingsListTile(
-                        //   title: 'My Media',
-                        //   icon: Icons.image,
-                        //   iconContainerColor: Colors.green,
-                        //   onTap: () {
-                        //     // navigate to account settings
-                        //   },
-                        // ),
-                        // SettingsListTile(
-                        //   title: 'Notifications',
-                        //   icon: Icons.notifications,
-                        //   iconContainerColor: Colors.red,
-                        //   onTap: () {
-                        //     // navigate to account settings
-                        //   },
-                        // ),
                       ],
                     ),
                   ),
-                  // const SizedBox(height: 10),
-                  // Card(
-                  //   child: Column(
-                  //     children: [
-                  //       SettingsListTile(
-                  //         title: 'Help',
-                  //         icon: Icons.help,
-                  //         iconContainerColor: Colors.yellow,
-                  //         onTap: () {
-                  //           // navigate to account settings
-                  //         },
-                  //       ),
-                  //       SettingsListTile(
-                  //         title: 'Share',
-                  //         icon: Icons.share,
-                  //         iconContainerColor: Colors.blue,
-                  //         onTap: () {
-                  //           // navigate to account settings
-                  //         },
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   const SizedBox(height: 10),
                   Card(
                     child: ListTile(
@@ -169,21 +132,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: const Text('Modo Oscuro'),
                       trailing: Switch(
-                          value: isDarkMode,
-                          onChanged: (value) {
-                            // set the isDarkMode to the value
-                            setState(() {
-                              isDarkMode = value;
-                            });
-                            // check if the value is true
-                            if (value) {
-                              // set the theme mode to dark
-                              AdaptiveTheme.of(context).setDark();
-                            } else {
-                              // set the theme mode to light
-                              AdaptiveTheme.of(context).setLight();
-                            }
-                          }),
+                        value: isDarkMode,
+                        onChanged: (value) {
+                          setState(() {
+                            isDarkMode = value;
+                          });
+                          if (value) {
+                            AdaptiveTheme.of(context).setDark();
+                          } else {
+                            AdaptiveTheme.of(context).setLight();
+                          }
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -202,7 +162,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               textAction: 'Logout',
                               onActionTap: (value) {
                                 if (value) {
-                                  // logout
                                   context
                                       .read<AuthenticationProvider>()
                                       .logout()

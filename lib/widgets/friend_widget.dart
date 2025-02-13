@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_pro/constants.dart';
-import 'package:flutter_chat_pro/enums/enums.dart';
 import 'package:flutter_chat_pro/models/user_model.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
@@ -10,11 +9,9 @@ class FriendWidget extends StatelessWidget {
   const FriendWidget({
     super.key,
     required this.friend,
-    required this.viewType,
   });
 
   final UserModel friend;
-  final FriendViewType viewType;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +30,6 @@ class FriendWidget extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       onTap: () {
-        // Navegar a la pantalla de chat
         Navigator.pushNamed(context, Constants.chatScreen, arguments: {
           Constants.contactUID: friend.uid,
           Constants.contactName: friend.name,

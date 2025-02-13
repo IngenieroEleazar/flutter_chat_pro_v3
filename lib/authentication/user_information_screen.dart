@@ -18,15 +18,12 @@ class UserInformationScreen extends StatefulWidget {
 }
 
 class _UserInformationScreenState extends State<UserInformationScreen> {
-  // final RoundedLoadingButtonController _btnController =
-  //     RoundedLoadingButtonController();
   final TextEditingController _nameController = TextEditingController();
   File? finalFileImage;
   String userImage = '';
 
   @override
   void dispose() {
-    //_btnController.stop();
     _nameController.dispose();
     super.dispose();
   }
@@ -107,95 +104,69 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
       ),
       body: Center(
           child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 20.0,
-        ),
-        child: Column(
-          children: [
-            DisplayUserImage(
-              finalFileImage: finalFileImage,
-              radius: 60,
-              onPressed: () {
-                showBottomSheet();
-              },
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 20.0,
             ),
-            const SizedBox(height: 30),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                hintText: 'Enter your name',
-                labelText: 'Enter your name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8),
+            child: Column(
+              children: [
+                DisplayUserImage(
+                  finalFileImage: finalFileImage,
+                  radius: 60,
+                  onPressed: () {
+                    showBottomSheet();
+                  },
+                ),
+                const SizedBox(height: 30),
+                TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter your name',
+                    labelText: 'Enter your name',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                const SizedBox(height: 40),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: MaterialButton(
+                    onPressed: context.read<AuthenticationProvider>().isLoading
+                        ? null
+                        : () {
+                      if (_nameController.text.isEmpty ||
+                          _nameController.text.length < 3) {
+                        showSnackBar(context, 'Please enter your name');
+                        return;
+                      }
+                      // save user data to firestore
+                      saveUserDataToFireStore();
+                    },
+                    child: context.watch<AuthenticationProvider>().isLoading
+                        ? const CircularProgressIndicator(
+                      color: Colors.orangeAccent,
+                    )
+                        : const Text(
+                      'Continue',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1.5),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 40),
-            Container(
-              width: double.infinity,
-              height: 50,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: MaterialButton(
-                onPressed: context.read<AuthenticationProvider>().isLoading
-                    ? null
-                    : () {
-                        if (_nameController.text.isEmpty ||
-                            _nameController.text.length < 3) {
-                          showSnackBar(context, 'Please enter your name');
-                          return;
-                        }
-                        // save user data to firestore
-                        saveUserDataToFireStore();
-                      },
-                child: context.watch<AuthenticationProvider>().isLoading
-                    ? const CircularProgressIndicator(
-                        color: Colors.orangeAccent,
-                      )
-                    : const Text(
-                        'Continue',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 1.5),
-                      ),
-              ),
-
-              // RoundedLoadingButton(
-              //   controller: _btnController,
-              //   onPressed: () {
-              //     if (_nameController.text.isEmpty ||
-              //         _nameController.text.length < 3) {
-              //       showSnackBar(context, 'Please enter your name');
-              //       _btnController.reset();
-              //       return;
-              //     }
-              //     // save user data to firestore
-              //     saveUserDataToFireStore();
-              //   },
-              //   successIcon: Icons.check,
-              //   successColor: Colors.green,
-              //   errorColor: Colors.red,
-              //   color: Theme.of(context).primaryColor,
-              //   child: const Text(
-              //     'Continue',
-              //     style: TextStyle(
-              //       color: Colors.white,
-              //       fontSize: 16,
-              //       fontWeight: FontWeight.w500,
-              //     ),
-              //   ),
-              // ),
-            ),
-          ],
-        ),
-      )),
+          )),
     );
   }
 
@@ -214,9 +185,6 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
       createdAt: '',
       isAdmin: false,
       isOnline: true,
-      friendsUIDs: [],
-      friendRequestsUIDs: [],
-      sentFriendRequestsUIDs: [],
     );
 
     authProvider.saveUserDataToFireStore(
@@ -238,7 +206,7 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
     // navigate to home screen and remove all previous screens
     Navigator.of(context).pushNamedAndRemoveUntil(
       Constants.homeScreen,
-      (route) => false,
+          (route) => false,
     );
   }
 }

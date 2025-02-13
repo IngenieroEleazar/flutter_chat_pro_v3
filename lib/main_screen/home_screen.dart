@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_pro/constants.dart';
 import 'package:flutter_chat_pro/main_screen/my_chats_screen.dart';
-import 'package:flutter_chat_pro/main_screen/people_screen.dart';
 import 'package:flutter_chat_pro/main_screen/teachers_screen.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/utilities/global_methods.dart';
@@ -22,7 +21,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   final List<Widget> pages = const [
     MyChatsScreen(),
-    PeopleScreen(),
     TeachersScreen(),
   ];
 
@@ -69,63 +67,60 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthenticationProvider>();
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('B&VMOLDEATUFUTURO'),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: userImageWidget(
-                imageUrl: authProvider.userModel!.image,
-                radius: 20,
-                onTap: () {
-                  // navigate to user profile with uis as arguments
-                  Navigator.pushNamed(
-                    context,
-                    Constants.profileScreen,
-                    arguments: authProvider.userModel!.uid,
-                  );
-                },
-              ),
-            )
-          ],
-        ),
-        body: PageView(
-          controller: pageController,
-          onPageChanged: (index) {
-            setState(() {
-              currentIndex = index;
-            });
-          },
-          children: pages,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.chat_bubble_2),
-              label: 'Chats',
+      appBar: AppBar(
+        title: const Text('B&VMOLDEATUFUTURO'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: userImageWidget(
+              imageUrl: authProvider.userModel!.image,
+              radius: 20,
+              onTap: () {
+                // navigate to user profile with uis as arguments
+                Navigator.pushNamed(
+                  context,
+                  Constants.profileScreen,
+                  arguments: authProvider.userModel!.uid,
+                );
+              },
             ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.globe),
-              label: 'People',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.person),
-              label: 'Docentes',
-            ),
-          ],
-          currentIndex: currentIndex,
-          selectedItemColor: Colors.blue, // Color de ítem seleccionado
-          unselectedItemColor: Colors.grey, // Color de ítems no seleccionados
-          backgroundColor: Colors.white, // Fondo del BottomNavigationBar
-          onTap: (index) {
-            // animate to the page
-            pageController.animateToPage(index,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeIn);
-            setState(() {
-              currentIndex = index;
-            });
-          },
-        ));
+          )
+        ],
+      ),
+      body: PageView(
+        controller: pageController,
+        onPageChanged: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        children: pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.chat_bubble_2),
+            label: 'Chats',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.person),
+            label: 'Docentes',
+          ),
+        ],
+        currentIndex: currentIndex,
+        selectedItemColor: Colors.blue, // Color de ítem seleccionado
+        unselectedItemColor: Colors.grey, // Color de ítems no seleccionados
+        backgroundColor: Colors.white, // Fondo del BottomNavigationBar
+        onTap: (index) {
+          // animate to the page
+          pageController.animateToPage(index,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeIn);
+          setState(() {
+            currentIndex = index;
+          });
+        },
+      ),
+    );
   }
 }

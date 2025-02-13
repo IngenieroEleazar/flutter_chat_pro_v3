@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_pro/enums/enums.dart';
 import 'package:flutter_chat_pro/models/user_model.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/widgets/friend_widget.dart';
 import 'package:provider/provider.dart';
 
 class FriendsList extends StatelessWidget {
-  const FriendsList({
-    super.key,
-    required this.viewType,
-  });
-
-  final FriendViewType viewType;
+  const FriendsList({super.key});
 
   @override
   Widget build(BuildContext context) {
     final uid = context.read<AuthenticationProvider>().userModel!.uid;
 
-    // Obtener todos los usuarios en lugar de solo amigos
     final future = context.read<AuthenticationProvider>().getAllUsers(uid);
 
     return FutureBuilder<List<UserModel>>(
@@ -38,7 +31,6 @@ class FriendsList extends StatelessWidget {
               final data = snapshot.data![index];
               return FriendWidget(
                 friend: data,
-                viewType: viewType,
               );
             },
           );

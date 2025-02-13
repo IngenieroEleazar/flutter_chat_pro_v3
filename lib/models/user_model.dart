@@ -11,9 +11,6 @@ class UserModel {
   String createdAt;
   bool isAdmin;
   bool isOnline;
-  List<String> friendsUIDs;
-  List<String> friendRequestsUIDs;
-  List<String> sentFriendRequestsUIDs;
 
   UserModel({
     required this.uid,
@@ -26,9 +23,6 @@ class UserModel {
     required this.createdAt,
     required this.isAdmin,
     required this.isOnline,
-    required this.friendsUIDs,
-    required this.friendRequestsUIDs,
-    required this.sentFriendRequestsUIDs,
   });
 
   // from map
@@ -44,11 +38,6 @@ class UserModel {
       createdAt: map[Constants.createdAt] ?? '',
       isAdmin: map[Constants.isAdmin] ?? false,
       isOnline: map[Constants.isOnline] ?? false,
-      friendsUIDs: List<String>.from(map[Constants.friendsUIDs] ?? []),
-      friendRequestsUIDs:
-          List<String>.from(map[Constants.friendRequestsUIDs] ?? []),
-      sentFriendRequestsUIDs:
-          List<String>.from(map[Constants.sentFriendRequestsUIDs] ?? []),
     );
   }
 
@@ -65,9 +54,6 @@ class UserModel {
       Constants.createdAt: createdAt,
       Constants.isAdmin: isAdmin,
       Constants.isOnline: isOnline,
-      Constants.friendsUIDs: friendsUIDs,
-      Constants.friendRequestsUIDs: friendRequestsUIDs,
-      Constants.sentFriendRequestsUIDs: sentFriendRequestsUIDs,
     };
   }
 

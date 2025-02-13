@@ -41,7 +41,6 @@ class _ChatListState extends State<ChatList> {
       {required String item, required MessageModel message}) {
     switch (item) {
       case 'Reply':
-      // set the message reply to true
         final messageReply = MessageReplyModel(
           message: message.message,
           senderUID: message.senderUID,
@@ -50,18 +49,15 @@ class _ChatListState extends State<ChatList> {
           messageType: message.messageType,
           isMe: true,
         );
-
         context.read<ChatProvider>().setMessageReplyModel(messageReply);
         break;
       case 'Copy':
-      // copy message to clipboard
         Clipboard.setData(ClipboardData(text: message.message));
         showSnackBar(context, 'Message copied to clipboard');
         break;
       case 'Delete':
         final currentUserId =
             context.read<AuthenticationProvider>().userModel!.uid;
-
         showDeletBottomSheet(
           message: message,
           currentUserId: currentUserId,
@@ -154,9 +150,7 @@ class _ChatListState extends State<ChatList> {
 
   void sendReactionToMessage(
       {required String reaction, required String messageId}) {
-    // get the sender uid
     final senderUID = context.read<AuthenticationProvider>().userModel!.uid;
-
     context.read<ChatProvider>().sendReactionToMessage(
       senderUID: senderUID,
       contactUID: widget.contactUID,
@@ -173,7 +167,6 @@ class _ChatListState extends State<ChatList> {
         child: EmojiPicker(
           onEmojiSelected: (category, emoji) {
             Navigator.pop(context);
-            // add emoji to message
             sendReactionToMessage(
               reaction: emoji.emoji,
               messageId: messageId,
@@ -186,7 +179,6 @@ class _ChatListState extends State<ChatList> {
 
   @override
   Widget build(BuildContext context) {
-    // Obtener el UID del usuario actual
     final authProvider = context.read<AuthenticationProvider>();
     final uid = authProvider.userModel!.uid;
 
@@ -196,7 +188,6 @@ class _ChatListState extends State<ChatList> {
         contactUID: widget.contactUID,
       ),
       builder: (context, snapshot) {
-        // Manejo de errores
         if (snapshot.hasError) {
           return const Center(
             child: Text(
@@ -206,14 +197,12 @@ class _ChatListState extends State<ChatList> {
           );
         }
 
-        // Mostrar indicador de carga mientras se espera la data
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        // Manejar caso de datos nulos o lista vacía
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(
             child: Text(
@@ -228,10 +217,8 @@ class _ChatListState extends State<ChatList> {
           );
         }
 
-        // Obtener los mensajes desde el snapshot
         final messagesList = snapshot.data!;
 
-        // Hacer scroll automático al nuevo mensaje
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_scrollController.hasClients) {
             _scrollController.animateTo(
@@ -259,7 +246,6 @@ class _ChatListState extends State<ChatList> {
           itemBuilder: (context, dynamic element) {
             final message = element as MessageModel;
 
-            // Marcar mensaje como visto si no es del remitente actual
             if (!message.isSeen && message.senderUID != uid) {
               context.read<ChatProvider>().setMessageStatus(
                 currentUserId: uid,
@@ -269,11 +255,9 @@ class _ChatListState extends State<ChatList> {
               );
             }
 
-            // Verificar si el mensaje fue eliminado por el usuario actual
             final isMe = element.senderUID == uid;
             final deletedByCurrentUser = message.deletedBy.contains(uid);
 
-            // Ocultar mensajes eliminados
             if (deletedByCurrentUser) {
               return const SizedBox.shrink();
             }
@@ -323,7 +307,6 @@ class _ChatListState extends State<ChatList> {
                 child: MessageWidget(
                   message: element,
                   onRightSwipe: () {
-                    // Establecer el mensaje como respuesta
                     final messageReply = MessageReplyModel(
                       message: element.message,
                       senderUID: element.senderUID,

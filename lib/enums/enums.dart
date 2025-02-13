@@ -1,9 +1,3 @@
-enum FriendViewType {
-  friends,
-  friendRequests,
-  allUsers,
-}
-
 enum MessageEnum {
   text,
   image,
