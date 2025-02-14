@@ -1,3 +1,4 @@
+// lib/main.dart
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ import 'package:flutter_chat_pro/main_screen/profile_screen.dart';
 import 'package:flutter_chat_pro/providers/authentication_provider.dart';
 import 'package:flutter_chat_pro/providers/chat_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_chat_pro/authentication/onboarding_screen.dart'; // Importa el onboarding screen
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,23 +23,26 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool seenOnboarding = prefs.getBool('seenOnboarding') ?? false;
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
-      child: MyApp(savedThemeMode: savedThemeMode),
+      child: MyApp(savedThemeMode: savedThemeMode, seenOnboarding: seenOnboarding),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.savedThemeMode});
+  const MyApp({super.key, required this.savedThemeMode, required this.seenOnboarding});
 
   final AdaptiveThemeMode? savedThemeMode;
+  final bool seenOnboarding;
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
@@ -56,13 +62,13 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Chat Pro',
         theme: theme,
         darkTheme: darkTheme,
-        initialRoute: Constants.landingScreen,
+        initialRoute: seenOnboarding ? Constants.landingScreen : Constants.onboardingScreen,
         routes: {
+          Constants.onboardingScreen: (context) => const OnboardingScreen(),
           Constants.landingScreen: (context) => const LandingScreen(),
           Constants.loginScreen: (context) => const LoginScreen(),
           Constants.otpScreen: (context) => const OTPScreen(),
-          Constants.userInformationScreen: (context) =>
-          const UserInformationScreen(),
+          Constants.userInformationScreen: (context) => const UserInformationScreen(),
           Constants.homeScreen: (context) => const HomeScreen(),
           Constants.profileScreen: (context) => const ProfileScreen(),
           Constants.chatScreen: (context) => const ChatScreen(),
