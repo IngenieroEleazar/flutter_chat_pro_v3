@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_pro/models/user_model.dart';
-import 'package:flutter_chat_pro/utilities/global_methods.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProfileStatusWidget extends StatelessWidget {
