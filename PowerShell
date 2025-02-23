@@ -1,0 +1,167 @@
+[33mcommit 2662d70b8e3a1e1b5531756e800f2bced41a11e1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: levi <levi_hp2000@hotmail.com>
+Date:   Sun Feb 16 17:17:29 2025 -0500
+
+    Guardar último avance antes de continuar con modificaciones
+
+[33mcommit b74b91b21260acee1c94aa894f349814cec31982[m[33m ([m[1;32mtemp-branch[m[33m)[m
+Author: levi <levi_hp2000@hotmail.com>
+Date:   Fri Feb 14 00:33:59 2025 -0500
+
+    Descripción de los cambios realizados
+
+[33mcommit 4bad45228d36a1ff1f8d2f68862c57bb6c3c3c0a[m
+Author: levi <levi_hp2000@hotmail.com>
+Date:   Thu Feb 13 00:41:12 2025 -0500
+
+    Guardar cambios antes de modificar filtros de isAdmin
+
+[33mcommit a81d473e0266ff14256a7b79c9a72cb671e6bca9[m
+Author: levi <levi_hp2000@hotmail.com>
+Date:   Wed Feb 12 21:39:26 2025 -0500
+
+    Mensaje descriptivo de los cambios
+
+[33mcommit 8074d901a24a635550ebdd993dabebf960b6bb73[m
+Author: levi <levi_hp2000@hotmail.com>
+Date:   Sun Dec 29 14:00:18 2024 -0500
+
+    segundo avance
+
+[33mcommit 07f9c80ea2f05e44e780bc2f873d97a1dc614cb3[m
+Author: levi <levi_hp2000@hotmail.com>
+Date:   Sat Dec 21 22:09:29 2024 -0500
+
+    Modificacion de algunos archivos v1
+
+[33mcommit 3b3e0bae5aa12138e6173e0d9ab80766ca82abb3[m
+Author: levi <levi_hp2000@hotmail.com>
+Date:   Mon Dec 2 15:58:54 2024 -0500
+
+    Primer commit: Subida inicial del proyecto
+
+[33mcommit c1ee1ce13eb80616ca02567f2f7e430e3f4ce6ad[m
+Author: Raphael Daka <raphaelsquared@gmail.com>
+Date:   Mon Apr 29 03:12:41 2024 +0200
+
+    Update FUNDING.yml
+
+[33mcommit 04ca4a999f825c19c8e91c6a2e49ccbf1f136050[m
+Author: Raphael Daka <raphaelsquared@gmail.com>
+Date:   Mon Apr 29 03:11:12 2024 +0200
+
+    Create FUNDING.yml
+
+[33mcommit 0e77a1a80ed1311b3216a6b7d18d4b9990b9cf61[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Sat Apr 27 09:28:54 2024 +0200
+
+    Fix bug in GroupProvider by removing admin UID from membersUIDs list
+
+[33mcommit 2a9f125ff5bac8920b037e79b76740edd02ad103[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Wed Apr 24 23:40:51 2024 +0200
+
+    Refactor authentication provider to include group members in getFriendsList method
+
+[33mcommit 5f04afcdabec3f79dd7145228c3a95a439e99055[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Sat Mar 16 08:02:21 2024 +0200
+
+    Remove StackedReactions widget and update imports and updated reactions package
+
+[33mcommit dd743de2fc7d6d01041ed29b217fd59af56507bc[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Tue Mar 12 00:01:35 2024 +0200
+
+    Update README with additional resources
+
+[33mcommit caa76bb706d85dca5b44872e4b10727b5be8a9eb[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Tue Feb 20 20:41:27 2024 +0200
+
+    Update dependencies and UI elements
+
+[33mcommit 5d4eb61268cb43aa54de2787198c757c5b09996a[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Sun Feb 18 11:18:15 2024 +0200
+
+    Remove unused import and rename widget
+
+[33mcommit b85e1056da729efdfdd99e9af3482430340be276[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 23:27:51 2024 +0200
+
+    Update image sizes and remove unused imports
+
+[33mcommit 71ad33f6e22a3426d1883b565bf1cbb098f7b2ec[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 23:20:17 2024 +0200
+
+    Update screenshot sizes in README.md
+
+[33mcommit 640d1b7bb40f0c93a4b2ca6c7b866711828f825c[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 23:18:45 2024 +0200
+
+    Add screenshots to README.md
+
+[33mcommit b6281311961de1b50f67fee77846ef4eb311a57e[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 23:16:13 2024 +0200
+
+    Refactor README.md to update image layout
+
+[33mcommit 024254a157ca8b11ce76ca09f9a347e79638289e[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 23:14:34 2024 +0200
+
+    Update image sizes in README.md
+
+[33mcommit 6a9cb8b59321f9e31aef6847e1fcbb1064379bd3[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 23:13:36 2024 +0200
+
+    Update README.md with new screenshots
+
+[33mcommit a9063b7fe9861dd43752184354e602abd86687b4[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 23:12:28 2024 +0200
+
+    Refactor README.md to use a grid layout for screenshots
+
+[33mcommit d839bec3696720716f04d8762875726bf146b4f4[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 23:11:24 2024 +0200
+
+    Add screenshots to README.md
+
+[33mcommit d17d4e20de581505eb12722e3d8de932e300899b[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 23:08:29 2024 +0200
+
+    Refactor screenshot layout in README.md
+
+[33mcommit a4cc3d9f442f79cf5ad3594c56678e33fa564a74[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 23:04:00 2024 +0200
+
+    Update README.md with new screenshots
+
+[33mcommit 41efa401dc3c7b84dbd9007c497086d0d91e6842[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 22:57:21 2024 +0200
+
+    Implement bug fix for issue #123
+
+[33mcommit de4bf1a8633ee8e4e540a2e2645f4d170089ac34[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 20:37:30 2024 +0200
+
+    Refactor code to improve performance and readability
+
+[33mcommit c71e2dc4647db7b1b89b60a77691d045338fc08b[m
+Author: Dexterfury <raphaelsquared@gmail.com>
+Date:   Fri Feb 16 20:26:20 2024 +0200
+
+    first commit

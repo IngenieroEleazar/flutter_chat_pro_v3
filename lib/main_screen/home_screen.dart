@@ -68,7 +68,11 @@ class _HomeScreenState extends State<HomeScreen>
     final authProvider = context.watch<AuthenticationProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('B&VMOLDEATUFUTURO'),
+        title: Image.asset(
+          'assets/images/logo_moldea.png',
+          height: 100, // Ajusta la altura según sea necesario
+        ),
+        backgroundColor: const Color(0xFF084EA5), // Color #084ea5
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -84,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen>
                 );
               },
             ),
-          )
+          ),
         ],
       ),
       body: PageView(
@@ -108,9 +112,9 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         ],
         currentIndex: currentIndex,
-        selectedItemColor: Colors.blue, // Color de ítem seleccionado
-        unselectedItemColor: Colors.grey, // Color de ítems no seleccionados
-        backgroundColor: Colors.white, // Fondo del BottomNavigationBar
+        selectedItemColor: Colors.white, // Color de ítem seleccionado
+        unselectedItemColor: Colors.white.withOpacity(0.6), // Color de ítems no seleccionados
+        backgroundColor: const Color(0xFF084EA5), // Fondo del BottomNavigationBar
         onTap: (index) {
           // animate to the page
           pageController.animateToPage(index,

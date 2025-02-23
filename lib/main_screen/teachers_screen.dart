@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:excel/excel.dart' as excel_lib;
+import 'package:http/http.dart' as http;
 
 class TeachersScreen extends StatefulWidget {
   const TeachersScreen({super.key});
@@ -97,9 +100,7 @@ class _TeachersScreenState extends State<TeachersScreen> {
                               child: Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      data['foto'] ?? 'url_a_imagen_por_defecto',
-                                    ),
+                                    backgroundImage: data['foto'] != null ? NetworkImage(data['foto']) : null,
                                     radius: 28,
                                     backgroundColor: Colors.grey[200],
                                     child: data['foto'] == null
@@ -131,6 +132,28 @@ class _TeachersScreenState extends State<TeachersScreen> {
                                             color: Colors.grey[600],
                                           ),
                                         ),
+                                        const SizedBox(height: 4),
+                                        // Mostrar link del horario_excel
+                                        data['horario_excel'] != null
+                                            ? GestureDetector(
+                                          onTap: () async {
+                                            final url = Uri.parse(data['horario_excel']);
+                                            if (await canLaunchUrl(url)) {
+                                              await launchUrl(url);
+                                            } else {
+                                              throw 'No se pudo abrir el enlace $url';
+                                            }
+                                          },
+                                          child: Text(
+                                            'Horario: Ver Excel',
+                                            style: GoogleFonts.openSans(
+                                              fontSize: 14,
+                                              color: Colors.blue,
+                                              decoration: TextDecoration.underline,
+                                            ),
+                                          ),
+                                        )
+                                            : const SizedBox.shrink(),
                                       ],
                                     ),
                                   ),
@@ -219,6 +242,28 @@ class TeacherDetailScreen extends StatelessWidget {
                       color: Colors.grey[600],
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  // Mostrar link del horario_excel
+                  docenteData['horario_excel'] != null
+                      ? GestureDetector(
+                    onTap: () async {
+                      final url = Uri.parse(docenteData['horario_excel']);
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url);
+                      } else {
+                        throw 'No se pudo abrir el enlace $url';
+                      }
+                    },
+                    child: Text(
+                      'Horario: Ver Excel',
+                      style: GoogleFonts.openSans(
+                        fontSize: 14,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  )
+                      : const SizedBox.shrink(),
                 ],
               ),
             ),
@@ -238,9 +283,9 @@ class TeacherDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
 
-                      // Horario por días
+                      // Previsualización del contenido del Excel
                       Text(
-                        'Horario:',
+                        'Previsualización del Horario:',
                         style: GoogleFonts.openSans(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -248,7 +293,22 @@ class TeacherDetailScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      _buildHorario(docenteData['horario'] ?? {}),
+                      docenteData['horario_excel'] != null
+                          ? FutureBuilder<Widget>(
+                        future: _buildExcelPreview(docenteData['horario_excel']),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error al cargar el archivo Excel: ${snapshot.error}');
+                          } else if (snapshot.hasData) {
+                            return snapshot.data!;
+                          } else {
+                            return const Text('No se pudo cargar la previsualización');
+                          }
+                        },
+                      )
+                          : const Text('No disponible'),
 
                       const SizedBox(height: 16),
 
@@ -284,29 +344,7 @@ class TeacherDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
 
-                      // Botón de contacto
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Acción para enviar mensaje
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                            backgroundColor: Colors.black87,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: Text(
-                            'Enviar Mensaje',
-                            style: GoogleFonts.openSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Botón de contacto eliminado
                     ],
                   ),
                 ),
@@ -355,46 +393,37 @@ class TeacherDetailScreen extends StatelessWidget {
     );
   }
 
-  // Método para construir el horario por días
-  Widget _buildHorario(Map<String, dynamic> horario) {
-    final dias = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
-    final nombresDias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  // Método para construir la previsualización del contenido del Excel
+  Future<Widget> _buildExcelPreview(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final bytes = response.bodyBytes;
+        final excel = excel_lib.Excel.decodeBytes(bytes);
+        final sheet = excel.tables.keys.first;
+        final table = excel.tables[sheet]!;
+        final rows = table.rows.take(5).toList(); // Tomar las primeras 5 filas como previsualización
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: dias.map((dia) {
-          final disponible = horario[dia] ?? false;
-          return Column(
-            children: [
-              Text(
-                nombresDias[dias.indexOf(dia)],
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Icon(
-                disponible ? Icons.check : Icons.close,
-                color: disponible ? Colors.green : Colors.red,
-                size: 20,
-              ),
-            ],
-          );
-        }).toList(),
-      ),
-    );
+        if (rows.isEmpty) {
+          throw 'El archivo Excel está vacío';
+        }
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            columns: rows.first.map((cell) => DataColumn(label: Text(cell?.value.toString() ?? ''))).toList(),
+            rows: rows.skip(1).map((row) {
+              return DataRow(
+                cells: row.map((cell) => DataCell(Text(cell?.value.toString() ?? ''))).toList(),
+              );
+            }).toList(),
+          ),
+        );
+      } else {
+        throw 'No se pudo cargar el archivo Excel';
+      }
+    } catch (e) {
+      throw 'Error al cargar el archivo Excel: $e';
+    }
   }
 }
