@@ -61,4 +61,7 @@ class Constants {
   static const String chats = 'chats';
   static const String messages = 'messages';
   static const chatFiles = 'chatFiles';
+
+  static const String dni = 'dni'; // Nuevo atributo
+  static const String correo = 'correo'; // Nuevo atributo
 }

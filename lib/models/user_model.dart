@@ -11,6 +11,8 @@ class UserModel {
   String createdAt;
   bool isAdmin;
   bool isOnline;
+  String dni; // Nuevo atributo
+  String correo; // Nuevo atributo
 
   UserModel({
     required this.uid,
@@ -23,6 +25,8 @@ class UserModel {
     required this.createdAt,
     required this.isAdmin,
     required this.isOnline,
+    required this.dni, // Nuevo atributo
+    required this.correo, // Nuevo atributo
   });
 
   // from map
@@ -38,6 +42,8 @@ class UserModel {
       createdAt: map[Constants.createdAt] ?? '',
       isAdmin: map[Constants.isAdmin] ?? false,
       isOnline: map[Constants.isOnline] ?? false,
+      dni: map['dni'] ?? '', // Nuevo atributo
+      correo: map['correo'] ?? '', // Nuevo atributo
     );
   }
 
@@ -54,6 +60,8 @@ class UserModel {
       Constants.createdAt: createdAt,
       Constants.isAdmin: isAdmin,
       Constants.isOnline: isOnline,
+      'dni': dni, // Nuevo atributo
+      'correo': correo, // Nuevo atributo
     };
   }
 

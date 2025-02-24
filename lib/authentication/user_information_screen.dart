@@ -19,13 +19,34 @@ class UserInformationScreen extends StatefulWidget {
 
 class _UserInformationScreenState extends State<UserInformationScreen> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _dniController = TextEditingController();
+  final TextEditingController _correoController = TextEditingController();
+  final ValueNotifier<bool> _isButtonEnabled = ValueNotifier(false);
   File? finalFileImage;
   String userImage = '';
 
   @override
+  void initState() {
+    super.initState();
+    _nameController.addListener(_validateForm);
+    _dniController.addListener(_validateForm);
+    _correoController.addListener(_validateForm);
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
+    _dniController.dispose();
+    _correoController.dispose();
+    _isButtonEnabled.dispose();
     super.dispose();
+  }
+
+  void _validateForm() {
+    final isNameValid = _nameController.text.isNotEmpty && _nameController.text.length >= 3;
+    final isDniValid = _dniController.text.isNotEmpty;
+    final isCorreoValid = _correoController.text.isNotEmpty;
+    _isButtonEnabled.value = isNameValid && isDniValid && isCorreoValid;
   }
 
   void selectImage(bool fromCamera) async {
@@ -103,70 +124,97 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
         title: const Text('User Information'),
       ),
       body: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 20.0,
-            ),
-            child: Column(
-              children: [
-                DisplayUserImage(
-                  finalFileImage: finalFileImage,
-                  radius: 60,
-                  onPressed: () {
-                    showBottomSheet();
-                  },
-                ),
-                const SizedBox(height: 30),
-                TextField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter your name',
-                    labelText: 'Enter your name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8),
-                      ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 20.0,
+          ),
+          child: Column(
+            children: [
+              DisplayUserImage(
+                finalFileImage: finalFileImage,
+                radius: 60,
+                onPressed: () {
+                  showBottomSheet();
+                },
+              ),
+              const SizedBox(height: 30),
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter your name',
+                  labelText: 'Enter your name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8),
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
-                Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(25),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _dniController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter your DNI',
+                  labelText: 'Enter your DNI',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8),
+                    ),
                   ),
-                  child: MaterialButton(
-                    onPressed: context.read<AuthenticationProvider>().isLoading
-                        ? null
-                        : () {
-                      if (_nameController.text.isEmpty ||
-                          _nameController.text.length < 3) {
-                        showSnackBar(context, 'Please enter your name');
-                        return;
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _correoController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter your email',
+                  labelText: 'Enter your email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              ValueListenableBuilder<bool>(
+                valueListenable: _isButtonEnabled,
+                builder: (context, isEnabled, child) {
+                  return Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: isEnabled ? Theme.of(context).primaryColor : Colors.grey,
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: MaterialButton(
+                      onPressed: isEnabled && !context.read<AuthenticationProvider>().isLoading
+                          ? () {
+                        saveUserDataToFireStore();
                       }
-                      // save user data to firestore
-                      saveUserDataToFireStore();
-                    },
-                    child: context.watch<AuthenticationProvider>().isLoading
-                        ? const CircularProgressIndicator(
-                      color: Colors.orangeAccent,
-                    )
-                        : const Text(
-                      'Continue',
-                      style: TextStyle(
+                          : null,
+                      child: context.watch<AuthenticationProvider>().isLoading
+                          ? const CircularProgressIndicator(
+                        color: Colors.orangeAccent,
+                      )
+                          : const Text(
+                        'Continue',
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
-                          letterSpacing: 1.5),
+                          letterSpacing: 1.5,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-          )),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -185,6 +233,8 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
       createdAt: '',
       isAdmin: false,
       isOnline: true,
+      dni: _dniController.text.trim(),
+      correo: _correoController.text.trim(),
     );
 
     authProvider.saveUserDataToFireStore(
