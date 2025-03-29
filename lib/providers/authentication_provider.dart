@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_pro/constants.dart';
 import 'package:flutter_chat_pro/models/user_model.dart';
@@ -29,6 +30,7 @@ class AuthenticationProvider extends ChangeNotifier {
   Future<List<UserModel>> getAllUsers(String uid) async {
     final snapshot = await FirebaseFirestore.instance
         .collection(Constants.users)
+        .where(Constants.isAdmin, isEqualTo: true) // Filtrar solo usuarios admin
         .where(Constants.uid, isNotEqualTo: uid) // Excluir el usuario actual
         .get();
     return snapshot.docs.map((doc) => UserModel.fromMap(doc.data())).toList();
@@ -61,11 +63,7 @@ class AuthenticationProvider extends ChangeNotifier {
   Future<bool> checkUserExists() async {
     DocumentSnapshot documentSnapshot =
     await _firestore.collection(Constants.users).doc(_uid).get();
-    if (documentSnapshot.exists) {
-      return true;
-    } else {
-      return false;
-    }
+    return documentSnapshot.exists;
   }
 
   // update user status
@@ -193,6 +191,9 @@ class AuthenticationProvider extends ChangeNotifier {
         userModel.image = imageUrl;
       }
 
+      // Obtener el token de FCM
+      userModel.token = await FirebaseMessaging.instance.getToken() ?? '';
+
       userModel.lastSeen = DateTime.now().microsecondsSinceEpoch.toString();
       userModel.createdAt = DateTime.now().microsecondsSinceEpoch.toString();
 
@@ -224,6 +225,7 @@ class AuthenticationProvider extends ChangeNotifier {
   Stream<QuerySnapshot> getAllUsersStream({required String userID}) {
     return _firestore
         .collection(Constants.users)
+        .where(Constants.isAdmin, isEqualTo: true) // Filtrar solo usuarios admin
         .where(Constants.uid, isNotEqualTo: userID)
         .snapshots();
   }
@@ -233,5 +235,25 @@ class AuthenticationProvider extends ChangeNotifier {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.clear();
     notifyListeners();
+  }
+
+  Future<UserModel> getUserById(String uid) async {
+    final doc = await _firestore.collection(Constants.users).doc(uid).get();
+    if (doc.exists) {
+      return UserModel.fromMap(doc.data()!);
+    } else {
+      throw Exception('User not found');
+    }
+  }
+
+  // Function to store file to Firebase Storage
+  Future<String> storeFileToStorage({
+    required File file,
+    required String reference,
+  }) async {
+    UploadTask uploadTask = _storage.ref().child(reference).putFile(file);
+    TaskSnapshot snapshot = await uploadTask;
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
   }
 }
