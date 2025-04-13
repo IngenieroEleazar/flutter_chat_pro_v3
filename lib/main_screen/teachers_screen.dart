@@ -12,25 +12,19 @@ class TeachersScreen extends StatefulWidget {
 class _TeachersScreenState extends State<TeachersScreen> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Docentes',
-          style: GoogleFonts.openSans(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
+        title: const Text('Docentes'),
+        centerTitle: true, // Esta es la línea clave que centra el título
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
+              const SizedBox(height: 8),
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
@@ -39,110 +33,91 @@ class _TeachersScreenState extends State<TeachersScreen> {
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
-                      return const Center(
-                        child: Text('Ocurrió un error al cargar los docentes'),
+                      return Center(
+                        child: Text(
+                          'Error al cargar docentes',
+                          style: GoogleFonts.roboto(
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                        ),
                       );
                     }
 
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: theme.colorScheme.primary,
+                        ),
                       );
                     }
 
                     if (snapshot.data!.docs.isEmpty) {
                       return Center(
                         child: Text(
-                          'No se encontraron docentes',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.openSans(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey[600],
+                          'No hay docentes registrados',
+                          style: GoogleFonts.roboto(
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
                           ),
                         ),
                       );
                     }
 
-                    return ListView.builder(
+                    return ListView.separated(
                       itemCount: snapshot.data!.docs.length,
+                      separatorBuilder: (context, index) => Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: theme.dividerColor,
+                      ),
                       itemBuilder: (context, index) {
                         final doc = snapshot.data!.docs[index];
                         final data = doc.data()! as Map<String, dynamic>;
 
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
-                              color: Colors.grey[300]!,
-                              width: 1,
+                        return ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 8),
+                          leading: CircleAvatar(
+                            radius: 24,
+                            backgroundColor: theme.colorScheme.surfaceVariant,
+                            backgroundImage: data['foto'] != null
+                                ? NetworkImage(data['foto'])
+                                : null,
+                            child: data['foto'] == null
+                                ? Icon(
+                              Icons.person_outline,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            )
+                                : null,
+                          ),
+                          title: Text(
+                            data['nombre'] ?? 'Nombre no disponible',
+                            style: GoogleFonts.roboto(
+                              fontWeight: FontWeight.w500,
+                              color: theme.colorScheme.onSurface,
                             ),
                           ),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TeacherDetailScreen(
-                                    docenteData: data,
-                                  ),
+                          subtitle: Text(
+                            data['especialidad'] ?? 'Especialidad no disponible',
+                            style: GoogleFonts.roboto(
+                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              fontSize: 14,
+                            ),
+                          ),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TeacherDetailScreen(
+                                  docenteData: data,
                                 ),
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      data['foto'] ?? 'url_a_imagen_por_defecto',
-                                    ),
-                                    radius: 28,
-                                    backgroundColor: Colors.grey[200],
-                                    child: data['foto'] == null
-                                        ? const Icon(
-                                      Icons.person_outline,
-                                      color: Colors.grey,
-                                      size: 28,
-                                    )
-                                        : null,
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          data['nombre'] ?? 'Nombre no disponible',
-                                          style: GoogleFonts.openSans(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          data['especialidad'] ?? 'Especialidad no disponible',
-                                          style: GoogleFonts.openSans(
-                                            fontSize: 14,
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 16,
-                                    color: Colors.grey,
-                                  ),
-                                ],
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         );
                       },
                     );
@@ -164,212 +139,126 @@ class TeacherDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Detalles del Docente',
-          style: GoogleFonts.openSans(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
+        title: const Text('Detalles'),
+        centerTitle: true, // También centrado aquí para consistencia
       ),
-      body: SafeArea(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cabecera minimalista
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24.0),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(30),
-                ),
-              ),
+            Center(
               child: Column(
                 children: [
                   CircleAvatar(
-                    backgroundColor: Colors.grey[200],
-                    radius: 45,
+                    radius: 40,
+                    backgroundColor: theme.colorScheme.surfaceVariant,
                     child: Icon(
                       Icons.person,
-                      size: 50,
-                      color: Colors.grey,
+                      size: 40,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     docenteData['nombre'] ?? 'Nombre no disponible',
-                    style: GoogleFonts.openSans(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                    style: GoogleFonts.roboto(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Text(
                     docenteData['especialidad'] ?? 'Especialidad no disponible',
-                    style: GoogleFonts.openSans(
-                      fontSize: 16,
-                      color: Colors.grey[600],
+                    style: GoogleFonts.roboto(
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
                   ),
                 ],
               ),
             ),
-
-            // Espacio para el resto del contenido
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Tarjeta de Grado Académico
-                      _buildInfoCard(
-                        title: 'Grado Académico',
-                        content: docenteData['grado_academico'] ?? 'No disponible',
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Horario por días
-                      Text(
-                        'Horario:',
-                        style: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      _buildHorario(docenteData['horario'] ?? {}),
-
-                      const SizedBox(height: 16),
-
-                      // Bloque de descripción
-                      Text(
-                        'Descripción:',
-                        style: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.grey[300]!,
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          docenteData['descripcion'] ?? 'Sin descripción',
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            color: Colors.grey[800],
-                            height: 1.5,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Botón de contacto
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Acción para enviar mensaje
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                            backgroundColor: Colors.black87,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: Text(
-                            'Enviar Mensaje',
-                            style: GoogleFonts.openSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+            const SizedBox(height: 24),
+            Text(
+              'Información académica',
+              style: GoogleFonts.roboto(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(color: theme.dividerColor),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                docenteData['grado_academico'] ?? 'No disponible',
+                style: GoogleFonts.roboto(
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ),
+            const SizedBox(height: 24),
+            Text(
+              'Horario',
+              style: GoogleFonts.roboto(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            _buildHorarioMinimalista(context, docenteData['horario'] ?? {}),
+            const SizedBox(height: 24),
+            Text(
+              'Descripción',
+              style: GoogleFonts.roboto(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(color: theme.dividerColor),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                docenteData['descripcion'] ?? 'Sin descripción',
+                style: GoogleFonts.roboto(
+                  height: 1.5,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
           ],
         ),
       ),
     );
   }
 
-  // Método para construir tarjetas de información clave
-  Widget _buildInfoCard({required String title, required String content}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.openSans(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            content,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: Colors.grey[700],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Método para construir el horario por días
-  Widget _buildHorario(Map<String, dynamic> horario) {
+  Widget _buildHorarioMinimalista(BuildContext context, Map<String, dynamic> horario) {
+    final theme = Theme.of(context);
     final dias = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
-    final nombresDias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+    final nombresDias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
-        ),
+        border: Border.all(color: theme.dividerColor),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -379,17 +268,26 @@ class TeacherDetailScreen extends StatelessWidget {
             children: [
               Text(
                 nombresDias[dias.indexOf(dia)],
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                style: GoogleFonts.roboto(
+                  fontWeight: FontWeight.w500,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 4),
-              Icon(
-                disponible ? Icons.check : Icons.close,
-                color: disponible ? Colors.green : Colors.red,
-                size: 20,
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: disponible
+                      ? Colors.green.withOpacity(0.2)
+                      : Colors.red.withOpacity(0.2),
+                ),
+                child: Icon(
+                  disponible ? Icons.check : Icons.close,
+                  size: 14,
+                  color: disponible ? Colors.green : Colors.red,
+                ),
               ),
             ],
           );

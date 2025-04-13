@@ -15,18 +15,20 @@ class LandingScreen extends StatefulWidget {
 class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
-    checkAthentication();
+    _checkAuthentication();
     super.initState();
   }
 
-  void checkAthentication() async {
+  Future<void> _checkAuthentication() async {
     final authProvider = context.read<AuthenticationProvider>();
     bool isAuthenticated = await authProvider.checkAuthenticationState();
 
-    navigate(isAuthenticated: isAuthenticated);
+    if (mounted) {
+      _navigate(isAuthenticated: isAuthenticated);
+    }
   }
 
-  navigate({required bool isAuthenticated}) {
+  void _navigate({required bool isAuthenticated}) {
     if (isAuthenticated) {
       Navigator.pushReplacementNamed(context, Constants.homeScreen);
     } else {

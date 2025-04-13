@@ -15,6 +15,7 @@ class Constants {
   static const String aboutScreen = '/aboutScreen';
   static const String privacyPolicyScreen = '/privacyPolicyScreen';
   static const String termsAndConditionsScreen = '/termsAndConditionsScreen';
+  static const String onboardingScreen = '/onboardingScreen';
 
   static const String uid = 'uid';
   static const String name = 'name';
@@ -59,5 +60,6 @@ class Constants {
   static const String lastMessage = 'lastMessage';
   static const String chats = 'chats';
   static const String messages = 'messages';
+  static const String teachersScreen = 'teachersScreen';
   static const chatFiles = 'chatFiles';
 }

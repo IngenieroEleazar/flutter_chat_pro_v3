@@ -44,3 +44,8 @@ app.*.map.json
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 lib/firebase_options.dart
+
+# Archivo problemático - versión segura para Windows
+"oft Corporation. Todos los derechos reservados."
+*Corporation*
+*reservados*
