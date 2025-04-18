@@ -137,7 +137,6 @@ class OnboardingPage extends StatelessWidget {
   final IconData icon;
   final Color color;
   final bool isDark;
-
   const OnboardingPage({
     super.key,
     required this.title,

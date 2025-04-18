@@ -15,10 +15,13 @@ class FriendsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uid = context.read<AuthenticationProvider>().userModel!.uid;
+    final authProvider = context.read<AuthenticationProvider>();
+    final currentUser = authProvider.userModel!;
+    final uid = currentUser.uid;
+    final isAdmin = currentUser.isAdmin;
 
-    // Obtener todos los usuarios en lugar de solo amigos
-    final future = context.read<AuthenticationProvider>().getAllUsers(uid);
+    // Usar getFilteredUsers para obtener usuarios según el tipo
+    final future = authProvider.getFilteredUsers(uid, isAdmin);
 
     return FutureBuilder<List<UserModel>>(
       future: future,

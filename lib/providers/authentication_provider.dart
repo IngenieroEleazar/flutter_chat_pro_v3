@@ -27,11 +27,13 @@ class AuthenticationProvider extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  Future<List<UserModel>> getAllUsers(String uid) async {
+  Future<List<UserModel>> getFilteredUsers(String uid, bool isAdmin) async {
     final snapshot = await FirebaseFirestore.instance
         .collection(Constants.users)
+        .where(Constants.isAdmin, isEqualTo: !isAdmin) // Mostrar solo el tipo opuesto
         .where(Constants.uid, isNotEqualTo: uid) // Excluir el usuario actual
         .get();
+
     return snapshot.docs.map((doc) => UserModel.fromMap(doc.data())).toList();
   }
 
