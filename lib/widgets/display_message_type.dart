@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_pro/enums/enums.dart';
 import 'package:flutter_chat_pro/widgets/audio_player_widget.dart';
 import 'package:flutter_chat_pro/widgets/video_player_widget.dart';
+import 'package:photo_view/photo_view.dart';
+
+import 'full_screen_image_viewer.dart';
 
 class DisplayMessageType extends StatelessWidget {
   const DisplayMessageType({
@@ -41,28 +44,36 @@ class DisplayMessageType extends StatelessWidget {
         case MessageEnum.image:
           return isReply
               ? const Icon(Icons.image)
-              : CachedNetworkImage(
-                  width: 200,
-                  height: 200,
-                  imageUrl: message,
-                  fit: BoxFit.cover,
-                );
+              : GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => FullScreenImageViewer(imageUrl: message),
+              ),
+            ),
+            child: CachedNetworkImage(
+              width: 200,
+              height: 200,
+              imageUrl: message,
+              fit: BoxFit.cover,
+            ),
+          );
         case MessageEnum.video:
           return isReply
               ? const Icon(Icons.video_collection)
               : VideoPlayerWidget(
-                  videoUrl: message,
-                  color: color,
-                  viewOnly: viewOnly,
-                );
+            videoUrl: message,
+            color: color,
+            viewOnly: viewOnly,
+          );
         case MessageEnum.audio:
           return isReply
               ? const Icon(Icons.audiotrack)
               : AudioPlayerWidget(
-                  audioUrl: message,
-                  color: color,
-                  viewOnly: viewOnly,
-                );
+            audioUrl: message,
+            color: color,
+            viewOnly: viewOnly,
+          );
         default:
           return Text(
             message,
